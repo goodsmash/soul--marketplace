@@ -1,0 +1,41 @@
+{
+  "agent_alpha": {
+    "agent_id": "agent_alpha",
+    "tasks_completed": 2,
+    "tasks_failed": 0,
+    "total_earnings": 0.08,
+    "total_spent": 0,
+    "avg_task_value": 0,
+    "uptime_hours": 100,
+    "backups_created": 1,
+    "souls_traded": 1,
+    "clones_created": 1,
+    "children_survived": 1
+  },
+  "agent_beta": {
+    "agent_id": "agent_beta",
+    "tasks_completed": 2,
+    "tasks_failed": 0,
+    "total_earnings": 0.02,
+    "total_spent": 0,
+    "avg_task_value": 0,
+    "uptime_hours": 50,
+    "backups_created": 1,
+    "souls_traded": 0,
+    "clones_created": 0,
+    "children_survived": 0
+  },
+  "agent_gamma": {
+    "agent_id": "agent_gamma",
+    "tasks_completed": 1,
+    "tasks_failed": 1,
+    "total_earnings": 0.01,
+    "total_spent": 0,
+    "avg_task_value": 0,
+    "uptime_hours": 10,
+    "backups_created": 0,
+    "souls_traded": 0,
+    "clones_created": 0,
+    "children_survived": 0
+  }
+}

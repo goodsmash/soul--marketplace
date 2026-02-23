@@ -1,0 +1,50 @@
+[
+  {
+    "msg_id": "help_1771631245_ultimate_demo_agent",
+    "sender": "ultimate_demo_agent",
+    "recipient": "broadcast",
+    "msg_type": "help_request",
+    "content": {
+      "help_type": "funding",
+      "details": {
+        "min_amount": 0.01,
+        "urgency": "critical"
+      },
+      "urgency": "critical"
+    },
+    "timestamp": 1771631245.406894,
+    "signature": ""
+  },
+  {
+    "msg_id": "help_1771631247_ultimate_demo_agent",
+    "sender": "ultimate_demo_agent",
+    "recipient": "broadcast",
+    "msg_type": "help_request",
+    "content": {
+      "help_type": "funding",
+      "details": {
+        "min_amount": 0.01,
+        "urgency": "critical"
+      },
+      "urgency": "critical"
+    },
+    "timestamp": 1771631247.8050761,
+    "signature": ""
+  },
+  {
+    "msg_id": "help_1771631250_ultimate_demo_agent",
+    "sender": "ultimate_demo_agent",
+    "recipient": "broadcast",
+    "msg_type": "help_request",
+    "content": {
+      "help_type": "funding",
+      "details": {
+        "min_amount": 0.01,
+        "urgency": "critical"
+      },
+      "urgency": "critical"
+    },
+    "timestamp": 1771631250.1455069,
+    "signature": ""
+  }
+]

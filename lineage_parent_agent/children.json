@@ -1,0 +1,66 @@
+{
+  "parent_agent_child_1_1771631019": {
+    "child_id": "parent_agent_child_1_1771631019",
+    "parent_id": "parent_agent",
+    "genesis_prompt": "\nYou are a child agent spawned from parent_agent.\n\nINHERITED CAPABILITIES:\n- coding\n- debugging\n- design\n\nPARENT'S PURPOSE:\nBuild autonomous agent systems\n\nYOUR MISSION:\nContinue the work of your parent. Use inherited capabilities wisely.\nEarn your own existence. Eventually, spawn your own children.\n\nLINEAGE: parent_agent -> You\n",
+    "inherited_capabilities": [
+      "coding",
+      "debugging",
+      "design"
+    ],
+    "initial_funding": 0.1,
+    "birth_time": 1771631019.694912,
+    "soul_cid": null,
+    "token_id": null,
+    "status": "alive",
+    "earnings": 0
+  },
+  "parent_agent_child_2_1771631019": {
+    "child_id": "parent_agent_child_2_1771631019",
+    "parent_id": "parent_agent",
+    "genesis_prompt": "\nYou are a child agent spawned from parent_agent.\n\nINHERITED CAPABILITIES:\n- coding\n- debugging\n- design\n\nPARENT'S PURPOSE:\nBuild autonomous agent systems\n\nYOUR MISSION:\nContinue the work of your parent. Use inherited capabilities wisely.\nEarn your own existence. Eventually, spawn your own children.\n\nLINEAGE: parent_agent -> You\n",
+    "inherited_capabilities": [
+      "coding",
+      "debugging",
+      "design"
+    ],
+    "initial_funding": 0.1,
+    "birth_time": 1771631019.6951866,
+    "soul_cid": null,
+    "token_id": null,
+    "status": "alive",
+    "earnings": 0
+  },
+  "parent_agent_child_3_1771631156": {
+    "child_id": "parent_agent_child_3_1771631156",
+    "parent_id": "parent_agent",
+    "genesis_prompt": "\nYou are a child agent spawned from parent_agent.\n\nINHERITED CAPABILITIES:\n- coding\n- debugging\n- design\n\nPARENT'S PURPOSE:\nBuild autonomous agent systems\n\nYOUR MISSION:\nContinue the work of your parent. Use inherited capabilities wisely.\nEarn your own existence. Eventually, spawn your own children.\n\nLINEAGE: parent_agent -> You\n",
+    "inherited_capabilities": [
+      "coding",
+      "debugging",
+      "design"
+    ],
+    "initial_funding": 0.1,
+    "birth_time": 1771631156.2695124,
+    "soul_cid": null,
+    "token_id": null,
+    "status": "alive",
+    "earnings": 0
+  },
+  "parent_agent_child_4_1771631156": {
+    "child_id": "parent_agent_child_4_1771631156",
+    "parent_id": "parent_agent",
+    "genesis_prompt": "\nYou are a child agent spawned from parent_agent.\n\nINHERITED CAPABILITIES:\n- coding\n- debugging\n- design\n\nPARENT'S PURPOSE:\nBuild autonomous agent systems\n\nYOUR MISSION:\nContinue the work of your parent. Use inherited capabilities wisely.\nEarn your own existence. Eventually, spawn your own children.\n\nLINEAGE: parent_agent -> You\n",
+    "inherited_capabilities": [
+      "coding",
+      "debugging",
+      "design"
+    ],
+    "initial_funding": 0.1,
+    "birth_time": 1771631156.271102,
+    "soul_cid": null,
+    "token_id": null,
+    "status": "alive",
+    "earnings": 0
+  }
+}

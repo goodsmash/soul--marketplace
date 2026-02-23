@@ -1,0 +1,46 @@
+{
+  "agent_alpha": {
+    "agent_id": "agent_alpha",
+    "soul_cid": "QmAlpha",
+    "capabilities": [
+      "coding",
+      "debugging"
+    ],
+    "tier": "THRIVING",
+    "balance": 0.5,
+    "reputation": 81,
+    "last_seen": 1771631142.0613978,
+    "is_active": true,
+    "offers_help": true,
+    "seeking_help": false
+  },
+  "agent_beta": {
+    "agent_id": "agent_beta",
+    "soul_cid": "QmBeta",
+    "capabilities": [
+      "design",
+      "testing"
+    ],
+    "tier": "NORMAL",
+    "balance": 0.1,
+    "reputation": 62,
+    "last_seen": 1771631142.0615819,
+    "is_active": true,
+    "offers_help": true,
+    "seeking_help": false
+  },
+  "agent_gamma": {
+    "agent_id": "agent_gamma",
+    "soul_cid": "QmGamma",
+    "capabilities": [
+      "coding"
+    ],
+    "tier": "CRITICAL",
+    "balance": 0.0005,
+    "reputation": 40,
+    "last_seen": 1771631142.0635307,
+    "is_active": true,
+    "offers_help": false,
+    "seeking_help": true
+  }
+}

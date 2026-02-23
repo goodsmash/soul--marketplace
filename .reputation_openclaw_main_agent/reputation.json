@@ -1,0 +1,15 @@
+{
+  "openclaw_main_agent": {
+    "agent_id": "openclaw_main_agent",
+    "overall_score": 34.0,
+    "reliability": 50,
+    "quality": 0.0,
+    "honesty": 95,
+    "helpfulness": 0,
+    "longevity": 0.0,
+    "total_transactions": 0,
+    "positive_ratings": 0,
+    "negative_ratings": 0,
+    "last_updated": 1771879046.9896305
+  }
+}

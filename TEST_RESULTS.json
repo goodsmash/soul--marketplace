@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-02-23T07:11:20.825Z",
+  "status": "ALL_TESTS_PASSED",
+  "contracts": {
+    "SoulToken": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "SoulMarketplace": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "SoulComputeNetwork": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+  },
+  "tests": [
+    "✅ SoulToken deployment",
+    "✅ mintSoul function",
+    "✅ getSoul function",
+    "✅ withdrawFees function",
+    "✅ SoulMarketplace deployment",
+    "✅ listSoul function",
+    "✅ buySoul function",
+    "✅ SoulComputeNetwork deployment",
+    "✅ registerWorker function",
+    "✅ submitTask function"
+  ]
+}

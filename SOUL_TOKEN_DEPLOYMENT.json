@@ -1,0 +1,12 @@
+{
+  "contract_name": "SoulToken",
+  "symbol": "SOUL",
+  "address": "0x2a8036e898Cbc1dB4CA8C2146cc385fB9CdB0bA3",
+  "network": "base-mainnet",
+  "deployed_at": "2026-02-22T21:42:00Z",
+  "deployed_by": "0xBe5DAd52427Fa812C198365AAb6fe916E1a61269",
+  "deploy_method": "bankr",
+  "total_supply": 1000000,
+  "view_url": "https://app.doppler.lol/tokens/base/0x2a8036e898Cbc1dB4CA8C2146cc385fB9CdB0bA3",
+  "status": "active"
+}

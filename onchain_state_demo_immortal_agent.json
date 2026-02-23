@@ -1,0 +1,16 @@
+{
+  "soul_id": "demo_immortal_agent",
+  "current_cid": "e3beb2fecc8a7a2ea11a8a88ba5480b14552c5eacd0255",
+  "backup_history": [
+    {
+      "cid": "e3beb2fecc8a7a2ea11a8a88ba5480b14552c5eacd0255",
+      "hash": "8d5c988eb71951e97c3ab71d91f2422eb62dad087bf77e0d047257f587638776",
+      "timestamp": 1771631140.053768,
+      "type": "auto",
+      "capabilities_hash": "d51a78b73f9bcbe2",
+      "earnings": 0.0001
+    }
+  ],
+  "token_id": null,
+  "contract_address": null
+}

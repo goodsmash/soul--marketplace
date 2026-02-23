@@ -1,0 +1,32 @@
+{
+  "soul_id": "demo_agent",
+  "current_cid": "24cb48a05b1242cc6374eee049f31905014927becb8702",
+  "backup_history": [
+    {
+      "cid": "7c615cdb28d9f9c55376fe1aa5834ce4035396c1631d8b",
+      "hash": "07682ffbba5b6321f19087fdc54264e2af1f47864cbe4a2acced3e7902ffa051",
+      "timestamp": 1771630061.7506652,
+      "type": "auto",
+      "capabilities_hash": "4fdda879c339cf7c",
+      "earnings": 0.005
+    },
+    {
+      "cid": "24cb48a05b1242cc6374eee049f31905014927becb8702",
+      "hash": "50a357baf60c0d91824ebf9c09cde63acaa426a23c43205b7920fab1fbbd29f3",
+      "timestamp": 1771630061.7523787,
+      "type": "manual",
+      "capabilities_hash": "b2adb1161b73fa03",
+      "earnings": 0.008
+    },
+    {
+      "cid": "24cb48a05b1242cc6374eee049f31905014927becb8702",
+      "hash": "50a357baf60c0d91824ebf9c09cde63acaa426a23c43205b7920fab1fbbd29f3",
+      "timestamp": 1771630061.752653,
+      "type": "mint",
+      "capabilities_hash": "b2adb1161b73fa03",
+      "earnings": 0.008
+    }
+  ],
+  "token_id": null,
+  "contract_address": null
+}

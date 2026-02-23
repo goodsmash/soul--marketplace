@@ -1,0 +1,16 @@
+{
+  "network": "base-mainnet",
+  "chainId": 8453,
+  "SoulToken": {
+    "address": "DEPLOY_AND_UPDATE",
+    "abi": [{"inputs":[{"internalType":"address","name":"_feeRecipient","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"currentSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"agent","type":"address"}],"name":"isAgentAlive","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"creature","type":"string"},{"internalType":"string","name":"ipfsHash","type":"string"},{"internalType":"string[]","name":"initialCapabilities","type":"string[]"}],"name":"mintSoul","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"withdrawFees","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+  },
+  "SoulMarketplace": {
+    "address": "DEPLOY_AND_UPDATE",
+    "abi": [{"inputs":[{"internalType":"address","name":"_soulToken","type":"address"},{"internalType":"address","name":"_feeRecipient","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"soulId","type":"uint256"}],"name":"buySoul","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"soulId","type":"uint256"},{"internalType":"uint256","name":"price","type":"uint256"}],"name":"listSoul","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+  },
+  "SoulComputeNetwork": {
+    "address": "DEPLOY_AND_UPDATE",
+    "abi": [{"inputs":[{"internalType":"address","name":"_feeRecipient","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"string","name":"taskType","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"duration","type":"uint256"}],"name":"submitTask","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"string","name":"capabilities","type":"string"}],"name":"registerWorker","outputs":[],"stateMutability":"nonpayable","type":"function"}]
+  }
+}

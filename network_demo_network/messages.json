@@ -1,0 +1,62 @@
+[
+  {
+    "msg_id": "help_1771631012_agent_gamma",
+    "sender": "agent_gamma",
+    "recipient": "broadcast",
+    "msg_type": "help_request",
+    "content": {
+      "help_type": "funding",
+      "details": {
+        "min_amount": 0.01
+      },
+      "urgency": "critical"
+    },
+    "timestamp": 1771631012.1847003,
+    "signature": ""
+  },
+  {
+    "msg_id": "offer_1771631012_agent_alpha",
+    "sender": "agent_alpha",
+    "recipient": "agent_gamma",
+    "msg_type": "offer",
+    "content": {
+      "offer_type": "funding",
+      "offer": {
+        "amount": 0.01,
+        "message": "Mutual aid funding"
+      }
+    },
+    "timestamp": 1771631012.184777,
+    "signature": ""
+  },
+  {
+    "msg_id": "help_1771631142_agent_gamma",
+    "sender": "agent_gamma",
+    "recipient": "broadcast",
+    "msg_type": "help_request",
+    "content": {
+      "help_type": "funding",
+      "details": {
+        "min_amount": 0.01
+      },
+      "urgency": "critical"
+    },
+    "timestamp": 1771631142.0639749,
+    "signature": ""
+  },
+  {
+    "msg_id": "offer_1771631142_agent_alpha",
+    "sender": "agent_alpha",
+    "recipient": "agent_gamma",
+    "msg_type": "offer",
+    "content": {
+      "offer_type": "funding",
+      "offer": {
+        "amount": 0.01,
+        "message": "Mutual aid funding"
+      }
+    },
+    "timestamp": 1771631142.0640986,
+    "signature": ""
+  }
+]

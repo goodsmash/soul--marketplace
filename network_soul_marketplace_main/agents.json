@@ -1,0 +1,34 @@
+{
+  "demo_immortal_agent": {
+    "agent_id": "demo_immortal_agent",
+    "soul_cid": null,
+    "capabilities": [
+      "file_management",
+      "code_generation",
+      "onchain_operations"
+    ],
+    "tier": "LOW",
+    "balance": 0.005300000000000001,
+    "reputation": 50,
+    "last_seen": 1771631140.4626346,
+    "is_active": true,
+    "offers_help": true,
+    "seeking_help": false
+  },
+  "ultimate_demo_agent": {
+    "agent_id": "ultimate_demo_agent",
+    "soul_cid": null,
+    "capabilities": [
+      "file_management",
+      "code_generation",
+      "onchain_operations"
+    ],
+    "tier": "CRITICAL",
+    "balance": 0.0,
+    "reputation": 50,
+    "last_seen": 1771631250.1450646,
+    "is_active": true,
+    "offers_help": true,
+    "seeking_help": true
+  }
+}

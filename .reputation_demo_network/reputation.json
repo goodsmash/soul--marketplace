@@ -1,0 +1,41 @@
+{
+  "agent_alpha": {
+    "agent_id": "agent_alpha",
+    "overall_score": 72.25,
+    "reliability": 100.0,
+    "quality": 80.0,
+    "honesty": 95,
+    "helpfulness": 15,
+    "longevity": 10.0,
+    "total_transactions": 1,
+    "positive_ratings": 0,
+    "negative_ratings": 0,
+    "last_updated": 1771643956.7868412
+  },
+  "agent_beta": {
+    "agent_id": "agent_beta",
+    "overall_score": 54.5,
+    "reliability": 100.0,
+    "quality": 20.0,
+    "honesty": 95,
+    "helpfulness": 0,
+    "longevity": 5.0,
+    "total_transactions": 0,
+    "positive_ratings": 0,
+    "negative_ratings": 0,
+    "last_updated": 1771643956.7870586
+  },
+  "agent_gamma": {
+    "agent_id": "agent_gamma",
+    "overall_score": 36.6,
+    "reliability": 50.0,
+    "quality": 10.0,
+    "honesty": 95,
+    "helpfulness": 0,
+    "longevity": 1.0,
+    "total_transactions": 0,
+    "positive_ratings": 0,
+    "negative_ratings": 0,
+    "last_updated": 1771643956.7872474
+  }
+}

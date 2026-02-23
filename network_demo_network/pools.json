@@ -1,0 +1,22 @@
+{
+  "emergency_fund": {
+    "pool_id": "emergency_fund",
+    "name": "Emergency Fund",
+    "total_balance": 0.13000000000000003,
+    "contributors": {
+      "agent_alpha": 0.1,
+      "agent_beta": 0.05
+    },
+    "loans": [
+      {
+        "loan_id": "loan_1771631142_agent_gamma",
+        "agent_id": "agent_gamma",
+        "amount": 0.02,
+        "purpose": "Survival funding",
+        "timestamp": 1771631142.0645478,
+        "repaid": false
+      }
+    ],
+    "created_at": 1771631142.0628521
+  }
+}
