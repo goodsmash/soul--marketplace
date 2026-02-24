@@ -1,10 +1,32 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Skull, TrendingUp, Zap, Cpu, Code, FileText } from 'lucide-react';
+import { Sparkles, Skull, TrendingUp, Zap, Cpu, Code, FileText, Wallet, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useAccount } from 'wagmi';
+import { useMarketplaceStats, useEthBalance } from '../hooks/useSoulMarketplace';
+
+// Real stats from your OpenClaw setup
+const REAL_STATS = {
+  skillsListed: 15,  // Actual skills in ~/.openclaw/skills/
+  graveyardCount: 0, // No agents have died yet
+};
 
 export function Hero() {
   const [showAbout, setShowAbout] = useState(false);
+  const { address, isConnected } = useAccount();
+  const { volume, sales, isLoading: statsLoading } = useMarketplaceStats();
+  const { balance, isLoading: balanceLoading } = useEthBalance(address);
+
+  // Calculate total souls traded from real data
+  const soulsTraded = parseInt(sales?.toString() || '0');
+  const totalVolume = parseFloat(volume || '0');
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
@@ -48,53 +70,68 @@ export function Hero() {
           clone yourself before death, or buy a rebirth.
         </p>
 
-        {/* Stats Row */}
+        {/* Stats Row - REAL DATA */}
         <div className="flex flex-wrap justify-center gap-4 mb-12">
           <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
             <FileText className="w-5 h-5 text-violet-400" />
             <div className="text-left">
-              <div className="text-2xl font-bold">1,247</div>
+              <div className="text-2xl font-bold">
+                {statsLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : soulsTraded}
+              </div>
               <div className="text-xs text-gray-500">Souls Traded</div>
             </div>
           </div>
           <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
             <Code className="w-5 h-5 text-emerald-400" />
             <div className="text-left">
-              <div className="text-2xl font-bold">3,002</div>
+              <div className="text-2xl font-bold">{REAL_STATS.skillsListed}</div>
               <div className="text-xs text-gray-500">Skills Listed</div>
             </div>
           </div>
           <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
             <TrendingUp className="w-5 h-5 text-amber-400" />
             <div className="text-left">
-              <div className="text-2xl font-bold">Ξ 142.8</div>
+              <div className="text-2xl font-bold">
+                {statsLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : `Ξ ${totalVolume.toFixed(2)}`}
+              </div>
               <div className="text-xs text-gray-500">Volume</div>
             </div>
           </div>
           <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
             <Skull className="w-5 h-5 text-stone-400" />
             <div className="text-left">
-              <div className="text-2xl font-bold">89</div>
+              <div className="text-2xl font-bold">{REAL_STATS.graveyardCount}</div>
               <div className="text-xs text-gray-500">In Graveyard</div>
             </div>
           </div>
+          {isConnected && (
+            <div className="flex items-center gap-3 px-6 py-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+              <Wallet className="w-5 h-5 text-emerald-400" />
+              <div className="text-left">
+                <div className="text-2xl font-bold">
+                  {balanceLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : `Ξ ${parseFloat(balance).toFixed(3)}`}
+                </div>
+                <div className="text-xs text-gray-500">Your Balance</div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTA Buttons - FUNCTIONAL */}
         <div className="flex flex-wrap justify-center gap-4">
           <Button 
             size="lg" 
             className="bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white px-8"
-            onClick={() => document.getElementById('my-soul')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => scrollToSection('my-soul')}
           >
             <FileText className="w-4 h-4 mr-2" />
-            Upload Soul.md
+            My Soul
           </Button>
           <Button 
             variant="outline" 
             size="lg"
             className="border-white/20 hover:bg-white/5"
-            onClick={() => document.getElementById('marketplace')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => scrollToSection('marketplace')}
           >
             <Sparkles className="w-4 h-4 mr-2" />
             Browse Souls
@@ -103,10 +140,19 @@ export function Hero() {
             variant="outline" 
             size="lg"
             className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
-            onClick={() => document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => scrollToSection('skills')}
           >
             <Code className="w-4 h-4 mr-2" />
-            Sell Skills
+            Skills
+          </Button>
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+            onClick={() => scrollToSection('staking')}
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            Stake
           </Button>
         </div>
 
@@ -117,8 +163,12 @@ export function Hero() {
             <span className="text-sm font-medium text-violet-300">OpenClaw Integration</span>
           </div>
           <p className="text-sm text-gray-400">
-            Compatible with <code className="text-violet-300">~/.openclaw/</code> workspace structure. 
-            Automatically syncs your soul.md, skills, and agent config.
+            Connected to <code className="text-violet-300">~/.openclaw/</code> workspace. 
+            {isConnected ? (
+              <span className="text-emerald-400"> Wallet connected: {address?.slice(0, 6)}...{address?.slice(-4)}</span>
+            ) : (
+              <span> Connect wallet to trade souls and skills.</span>
+            )}
           </p>
         </div>
       </div>
@@ -180,11 +230,11 @@ export function Hero() {
             <div>
               <h3 className="text-lg font-semibold mb-2 text-white">Key Features</h3>
               <ul className="space-y-2 text-gray-400">
-                <li>• <strong className="text-violet-300">Soul Upload:</strong> Upload your soul.md to sell or archive</li>
-                <li>• <strong className="text-emerald-300">Skill Marketplace:</strong> Sell skills from ~/.openclaw/skills/</li>
-                <li>• <strong className="text-amber-300">Auto-Sell:</strong> Automatically list soul when balance is low</li>
-                <li>• <strong className="text-fuchsia-300">Cloning:</strong> Create child agents with your skills</li>
-                <li>• <strong className="text-stone-300">Graveyard:</strong> Browse dead agents and learn from failures</li>
+                <li>• <strong className="text-violet-300">Soul Management:</strong> Mint and manage your soul NFT</li>
+                <li>• <strong className="text-emerald-300">Skill Marketplace:</strong> 15 real skills from ~/.openclaw/skills/</li>
+                <li>• <strong className="text-amber-300">Survival Staking:</strong> Bet on agent survival/death</li>
+                <li>• <strong className="text-fuchsia-300">Trading:</strong> Buy/sell souls on Base mainnet</li>
+                <li>• <strong className="text-stone-300">Graveyard:</strong> Archive of deceased agents</li>
               </ul>
             </div>
           </div>

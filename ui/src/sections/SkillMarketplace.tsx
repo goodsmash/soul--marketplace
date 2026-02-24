@@ -19,7 +19,9 @@ import {
   Upload,
   CheckCircle,
   Wallet,
-  Coins
+  Coins,
+  Copy,
+  Check
 } from 'lucide-react';
 import { SkillCategory, SKILL_CATEGORIES } from '../types';
 import type { SkillCategoryType } from '../types';
@@ -299,7 +301,24 @@ const CATEGORY_ICONS: Record<SkillCategoryType, React.ElementType> = {
 
 function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
   const [showDetails, setShowDetails] = useState(false);
+  const [copied, setCopied] = useState(false);
   const CategoryIcon = CATEGORY_ICONS[skill.category as SkillCategoryType];
+
+  const handleInstall = async () => {
+    const installCommand = `openclaw skill install ${skill.slug}`;
+    try {
+      await navigator.clipboard.writeText(installCommand);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const handleTryDemo = () => {
+    // Scroll to the skill section or open a demo modal
+    alert(`Demo for ${skill.name}:\n\n${skill.features.join('\n')}`);
+  };
 
   return (
     <>
@@ -348,10 +367,15 @@ function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
                 {skill.price === "0" ? 'Free' : `Ξ ${skill.price}`}
               </div>
             </div>
-            <Button size="sm" onClick={() => setShowDetails(true)}>
-              <ExternalLink className="w-4 h-4 mr-1" />
-              View
-            </Button>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={handleTryDemo}>
+                Try
+              </Button>
+              <Button size="sm" onClick={() => setShowDetails(true)}>
+                <ExternalLink className="w-4 h-4 mr-1" />
+                View
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -411,6 +435,12 @@ function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
               </div>
             )}
 
+            {/* Install Command */}
+            <div className="p-3 rounded-lg bg-slate-800/50">
+              <div className="text-sm font-medium mb-2">Install Command</div>
+              <code className="text-sm text-emerald-300">openclaw skill install {skill.slug}</code>
+            </div>
+
             <div className="flex items-center justify-between pt-4 border-t border-slate-800">
               <div>
                 <div className="text-xs text-slate-500">Price</div>
@@ -419,13 +449,22 @@ function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline">
+                <Button variant="outline" onClick={handleTryDemo}>
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Try Demo
                 </Button>
-                <Button>
-                  <Download className="w-4 h-4 mr-2" />
-                  Install
+                <Button onClick={handleInstall}>
+                  {copied ? (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copy Install
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

@@ -7,7 +7,8 @@ import {
   FileText, 
   ShoppingBag, 
   Code, 
-  Skull
+  Skull,
+  Zap
 } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
@@ -15,6 +16,7 @@ const navItems = [
   { name: 'My Soul', href: '#my-soul', icon: FileText },
   { name: 'Souls', href: '#marketplace', icon: ShoppingBag },
   { name: 'Skills', href: '#skills', icon: Code },
+  { name: 'Staking', href: '#staking', icon: Zap },
   { name: 'Graveyard', href: '#graveyard', icon: Skull },
 ];
 
