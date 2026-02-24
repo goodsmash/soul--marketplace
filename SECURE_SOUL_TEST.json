@@ -1,0 +1,13 @@
+{
+  "secure_soul_token": "0x4B7cb74c18F435Ef587e994494a1c063C154D8Cd",
+  "soul_id": 0,
+  "soul_name": "",
+  "ipfs_hash": "QmSecureSoul123",
+  "tx_hash": "9fef300edfef7512551b4cc10a704dce696c0cb6e79b8e6b75a3aeb9a576fd11",
+  "features_tested": [
+    "mint",
+    "reentrancy_guard",
+    "pausable",
+    "custom_errors"
+  ]
+}
