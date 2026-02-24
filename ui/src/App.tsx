@@ -4,6 +4,7 @@ import { Hero } from './sections/Hero';
 import { MySoul } from './sections/MySoul';
 import { SoulMarketplace } from './sections/SoulMarketplace';
 import { SkillMarketplace } from './sections/SkillMarketplace';
+import { Staking } from './sections/Staking';
 import { Graveyard } from './sections/Graveyard';
 import { Footer } from './sections/Footer';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -18,6 +19,7 @@ function App() {
           <MySoul />
           <SoulMarketplace />
           <SkillMarketplace />
+          <Staking />
           <Graveyard />
         </main>
         <Footer />
