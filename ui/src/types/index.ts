@@ -83,7 +83,7 @@ export interface Skill {
   description: string;
   version: string;
   author: string;
-  category: SkillCategory;
+  category: SkillCategoryType;
   
   // Usage stats
   installs: number;
@@ -257,7 +257,7 @@ export const TIER_DESCRIPTIONS: Record<SoulTierType, string> = {
 };
 
 // Skill Categories
-export const SKILL_CATEGORIES: Record<SkillCategoryType, { name: string; icon: string }> = {
+export const SKILL_CATEGORIES: Record<typeof SkillCategory[keyof typeof SkillCategory], { name: string; icon: string }> = {
   [SkillCategory.WEB]: { name: 'Web & Frontend', icon: 'Globe' },
   [SkillCategory.DEVOPS]: { name: 'DevOps & Cloud', icon: 'Cloud' },
   [SkillCategory.AUTOMATION]: { name: 'Automation', icon: 'Zap' },

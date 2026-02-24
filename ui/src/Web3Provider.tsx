@@ -41,7 +41,7 @@ export function Web3Provider({ children }: Web3ProviderProps) {
           })}
           modalSize="compact"
         >
-          {children}
+          {children as any}
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

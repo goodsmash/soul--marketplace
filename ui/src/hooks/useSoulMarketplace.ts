@@ -33,7 +33,7 @@ export function useHasSoul(address?: string) {
     }
   });
 
-  const soulId = data ? Number(data) : 0;
+  const soulId = data ? Number(data as bigint) : 0;
 
   return {
     hasSoul: soulId > 0,
@@ -55,8 +55,20 @@ export function useSoulDetails(soulId: number) {
     }
   });
 
+  // Properly type the returned data
+  const soul = data as {
+    0: number; // birthTime
+    1: number; // deathTime
+    2: bigint; // totalEarnings
+    3: boolean; // isAlive
+    4: number; // capabilityCount
+    5: string; // name
+    6: string; // creature
+    7: string; // ipfsHash
+  } | undefined;
+
   return {
-    soul: data,
+    soul,
     isLoading,
     error
   };
@@ -97,20 +109,28 @@ export function useListing(soulId: number) {
     }
   });
 
-  if (!data) {
+  // Properly type the returned data
+  const listingData = data as {
+    0: string; // seller
+    1: bigint; // price
+    2: number; // listedAt
+    3: boolean; // active
+  } | undefined;
+
+  if (!listingData) {
     return { listing: null, isLoading, error };
   }
 
   const listing: SoulListing = {
     id: `listing-${soulId}`,
     soulId: soulId.toString(),
-    seller: data[0],
-    price: formatEther(data[1]),
+    seller: listingData[0],
+    price: formatEther(listingData[1]),
     saleType: 'full',
     reason: '',
     isDistress: false,
-    listedAt: Number(data[2]),
-    active: data[3],
+    listedAt: listingData[2],
+    active: listingData[3],
   };
 
   return {
@@ -171,13 +191,16 @@ export function useMarketplaceStats() {
     functionName: 'getStats',
   });
 
-  if (!data) {
+  // Properly type the returned data
+  const statsData = data as [bigint, number] | undefined;
+
+  if (!statsData) {
     return { volume: '0', sales: 0, isLoading, error };
   }
 
   return {
-    volume: formatEther(data[0]),
-    sales: Number(data[1]),
+    volume: formatEther(statsData[0]),
+    sales: statsData[1],
     isLoading,
     error
   };

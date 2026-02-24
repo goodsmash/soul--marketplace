@@ -7,11 +7,9 @@ import {
   Skull, 
   Search, 
   Clock, 
-  AlertCircle, 
-  History,
+  AlertCircle,
   TrendingDown,
   BookOpen,
-  ExternalLink,
   RefreshCw,
   FileText,
   Zap

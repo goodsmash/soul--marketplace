@@ -1,32 +1,23 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { 
   FileText, 
-  Upload, 
-  Cpu, 
-  TrendingUp, 
-  TrendingDown, 
   AlertTriangle,
-  CheckCircle,
-  Copy,
   Zap,
   Skull,
-  RefreshCw,
   DollarSign,
   Code,
   Wallet,
   Loader2
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { SoulTier, TIER_NAMES, TIER_COLORS, AgentStatus } from '../types';
+import { SoulTier, AgentStatus } from '../types';
 import { useAccount } from 'wagmi';
 import { useHasSoul, useSoulDetails, useMintFee, useMintSoul, useEthBalance, useListSoul } from '../hooks/useSoulMarketplace';
-import { formatEther } from 'viem';
 
 export function MySoul() {
   const { address } = useAccount();
@@ -172,14 +163,14 @@ export function MySoul() {
     );
   }
 
-  // Parse soul data from contract
+  // Parse soul data from contract with proper typing
   const soulData = soul ? {
     id: `soul-${soulId}`,
-    name: soul[5], // name from struct
-    creature: soul[6], // creature from struct
-    status: soul[3] ? AgentStatus.ALIVE : AgentStatus.DEAD, // isAlive
-    birthTime: Number(soul[0]), // birthTime
-    survivalTime: Date.now() / 1000 - Number(soul[0]),
+    name: (soul as any)[5], // name from struct
+    creature: (soul as any)[6], // creature from struct
+    status: (soul as any)[3] ? AgentStatus.ALIVE : AgentStatus.DEAD, // isAlive
+    birthTime: Number((soul as any)[0]), // birthTime
+    survivalTime: Date.now() / 1000 - Number((soul as any)[0]),
     tier: SoulTier.BAZAAR, // Default, can be calculated
     experience: 0,
     reputation: 50,

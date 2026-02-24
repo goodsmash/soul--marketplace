@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Skull, TrendingUp, Users, Zap, Cpu, Code, FileText } from 'lucide-react';
+import { Sparkles, Skull, TrendingUp, Zap, Cpu, Code, FileText } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 export function Hero() {
