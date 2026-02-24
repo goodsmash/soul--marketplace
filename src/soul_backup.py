@@ -9,6 +9,7 @@ Ensures agent immortality through:
 """
 
 import os
+import sys
 import json
 import hashlib
 import base64
