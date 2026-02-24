@@ -268,23 +268,23 @@ export const SKILL_CATEGORIES: Record<typeof SkillCategory[keyof typeof SkillCat
   [SkillCategory.TOOLS]: { name: 'Tools', icon: 'Wrench' }
 };
 
-// Contract addresses (UPDATED with our deployed contracts on Base Mainnet)
+// Contract addresses (from environment variables with fallbacks)
 export const CONTRACT_ADDRESSES = {
   // Base Mainnet - Our deployed contracts
-  soulToken: '0xd2565D67398Db41dfe88E7e826253756A440132a',     // Cheap SoulToken NFT (0.00001 ETH mint)
-  marketplace: '0xd464cc6600F7Ce9Cac72b6338DadB217Da509306',    // SoulMarketplace
-  skillRegistry: '0x0000000000000000000000000000000000000000',   // TODO: Deploy
-  staking: '0x0000000000000000000000000000000000000000',         // TODO: Deploy
+  soulToken: import.meta.env.VITE_SOUL_TOKEN_ADDRESS || '0xd2565D67398Db41dfe88E7e826253756A440132a',
+  marketplace: import.meta.env.VITE_MARKETPLACE_ADDRESS || '0xd464cc6600F7Ce9Cac72b6338DadB217Da509306',
+  skillRegistry: '0x0000000000000000000000000000000000000000',
+  staking: '0x0000000000000000000000000000000000000000',
   
   // Legacy contracts (for reference)
-  soulTokenOriginal: '0x18104CA13677F9630a0188Ed8254ECFA604e0bbB', // Original deployment
-  marketplaceOriginal: '0xAC4136b1Fbe480dDB41C92EdAEaCf1E185F586d3', // Original marketplace
+  soulTokenOriginal: '0x18104CA13677F9630a0188Ed8254ECFA604e0bbB',
+  marketplaceOriginal: '0xAC4136b1Fbe480dDB41C92EdAEaCf1E185F586d3',
   
   // Network config
-  network: 'base-mainnet',
-  chainId: 8453,
-  rpcUrl: 'https://mainnet.base.org',
-  blockExplorer: 'https://basescan.org'
+  network: import.meta.env.VITE_NETWORK || 'base-mainnet',
+  chainId: parseInt(import.meta.env.VITE_CHAIN_ID || '8453'),
+  rpcUrl: import.meta.env.VITE_RPC_URL || 'https://mainnet.base.org',
+  blockExplorer: import.meta.env.VITE_BLOCK_EXPLORER || 'https://basescan.org'
 };
 
 // ABI fragments for common functions
