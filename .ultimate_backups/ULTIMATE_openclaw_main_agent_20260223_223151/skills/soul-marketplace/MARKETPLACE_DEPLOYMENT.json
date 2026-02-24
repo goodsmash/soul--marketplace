@@ -1,0 +1,10 @@
+{
+  "contract_name": "SoulMarketplace",
+  "address": "0xAC4136b1Fbe480dDB41C92EdAEaCf1E185F586d3",
+  "soul_token": "0x2a8036e898Cbc1dB4CA8C2146cc385fB9CdB0bA3",
+  "fee_recipient": "0xff310EDf4f8d2F7FBc4EfD09D1E7D5Ab0E2D2131",
+  "network": "base",
+  "deployed_at": "2026-02-24T03:06:02.529Z",
+  "deployed_by": "0xff310EDf4f8d2F7FBc4EfD09D1E7D5Ab0E2D2131",
+  "tx_hash": "0x92ad697a23e375bc0073d0e8ece157a9e89455458ccadaa78549b08aadefcf5c"
+}

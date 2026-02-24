@@ -1,0 +1,8 @@
+{
+  "contract": "SoulToken_CHEAP",
+  "address": "0xd2565D67398Db41dfe88E7e826253756A440132a",
+  "mint_fee": "0.00001 ETH",
+  "network": "base-mainnet",
+  "deployer": "0xff310EDf4f8d2F7FBc4EfD09D1E7D5Ab0E2D2131",
+  "tx_hash": "e9b24d2d40f20782f9cacdc3033a479e87f2400ee6979b52e23a272faafb0c36"
+}

@@ -1,0 +1,9 @@
+{
+  "heartbeats": 50,
+  "last_heartbeat": "2026-02-23T20:21:57.330161",
+  "current_tier": "NORMAL",
+  "balance_eth": "0.014",
+  "pending_actions": [],
+  "completed_actions": [],
+  "autonomous_mode": true
+}

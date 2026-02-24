@@ -1,0 +1,8 @@
+{
+  "contract": "SoulMarketplace",
+  "address": "0xd464cc6600F7Ce9Cac72b6338DadB217Da509306",
+  "soul_token": "0x18104CA13677F9630a0188Ed8254ECFA604e0bbB",
+  "network": "base-mainnet",
+  "deployer": "0xff310EDf4f8d2F7FBc4EfD09D1E7D5Ab0E2D2131",
+  "tx_hash": "abfd04f22ae199fc69a7a6eb96684837a0044cfdc9dc4d30d79bdf0255c737ba"
+}

@@ -1,0 +1,63 @@
+{
+  "backup_id": "ULTIMATE_openclaw_main_agent_20260223_223151",
+  "agent_id": "openclaw_main_agent",
+  "timestamp": "2026-02-23T22:31:51.806355",
+  "version": "2.0",
+  "components": {
+    "souls": {
+      "count": 7,
+      "files": [
+        {
+          "name": "SOUL_openclaw_main_agent.json",
+          "size": 1026,
+          "hash": "4e2a3cf7b4c3942776f0a425d2cb55dedc2953c9d4a6156dc5b1e15d1a4ac045"
+        },
+        {
+          "name": "SOUL_demo_immortal_agent.json",
+          "size": 1619,
+          "hash": "151231137c202868fa1fddf3a0641dab9b42f511492a6730986ed3f02b6a292c"
+        },
+        {
+          "name": "SOUL_ultimate_demo_agent.json",
+          "size": 1026,
+          "hash": "71f65f28350fb504b94f80cde3e0ddbadaf0c572ee1552972618ca92e90537aa"
+        },
+        {
+          "name": "SOUL_demo_agent.json",
+          "size": 1318,
+          "hash": "24cb48a05b1242cc6374eee049f31905014927becb870261c605c7a93fef3a7d"
+        },
+        {
+          "name": "SOUL_OPENCLAW.json",
+          "size": 1131,
+          "hash": "93f96551273e65e8451f1b961a56115128222e12dc2de0cc2bbef8eb2210e672"
+        },
+        {
+          "name": "SOUL_TOKEN_DEPLOYMENT.json",
+          "size": 419,
+          "hash": "a1dbbce0318bec8194d6f8f9459aa5364eef1e60334429d0ec5c1e42b6d55a43"
+        },
+        {
+          "name": "SOUL_openclaw_main_agent.json",
+          "size": 1026,
+          "hash": "4e2a3cf7b4c3942776f0a425d2cb55dedc2953c9d4a6156dc5b1e15d1a4ac045"
+        }
+      ]
+    },
+    "skills": {
+      "count": 134
+    },
+    "contracts": {
+      "deployments": 5
+    },
+    "agent_state": {
+      "files": 7
+    },
+    "work_history": {
+      "files": 2
+    }
+  },
+  "total_size_bytes": 778590,
+  "total_size_human": "760.34 KB",
+  "recovery_key": "SOUL-SPARK-LIGHT-DREAM-SOUL-deb65493"
+}
