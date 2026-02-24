@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "ui/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "ui/dist/$1"
+    }
+  ],
+  "buildCommand": "cd ui && npm run build",
+  "outputDirectory": "ui/dist",
+  "framework": "vite"
+}
