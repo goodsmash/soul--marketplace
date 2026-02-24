@@ -244,7 +244,14 @@
       "description": "code_fix",
       "value": 0.0001,
       "capability": "code_fix"
+    },
+    {
+      "timestamp": "2026-02-23T23:58:15.298688",
+      "type": "code_fix",
+      "description": "code_fix",
+      "value": 0.0001,
+      "capability": "code_fix"
     }
   ],
-  "total_value": 0.0215
+  "total_value": 0.021599999999999998
 }
