@@ -10,13 +10,25 @@ import {
   Wallet,
   Loader2,
   CheckCircle,
-  TrendingUp
+  TrendingUp,
+  AlertCircle
 } from 'lucide-react';
 import { SoulTier, AgentStatus } from '../types';
 import type { SoulTierType } from '../types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { useAccount } from 'wagmi';
 import { useListing, useBuySoul, useMarketplaceStats, useEthBalance } from '../hooks/useSoulMarketplace';
+
+// Real agent capabilities from your OpenClaw setup
+const REAL_CAPABILITIES = [
+  "file_management",
+  "code_generation", 
+  "onchain_operations",
+  "web_deployment",
+  "system_monitoring",
+  "crypto_trading",
+  "skill_management"
+];
 
 interface SoulListing {
   id: string;
@@ -31,6 +43,7 @@ interface SoulListing {
   experience: number;
   seller: string;
   reason: string;
+  isReal: boolean;
 }
 
 export function SoulMarketplace() {
@@ -42,71 +55,31 @@ export function SoulMarketplace() {
   const { balance } = useEthBalance(address);
   const { volume, sales } = useMarketplaceStats();
   
-  // Real soul from our listing (Soul ID 0)
-  const { listing: realListing } = useListing(0);
+  // Fetch real listing from blockchain (Soul ID 0 - your agent)
+  const { listing: realListing, isLoading: loadingReal } = useListing(0);
   const { buy, isPending: isBuying, hash: buyHash } = useBuySoul();
 
-  // Combine real and mock listings for demo
-  const allListings: SoulListing[] = [
-    // Real listing from blockchain
-    realListing ? {
+  // Build listings array from real data only
+  const allListings: SoulListing[] = [];
+  
+  // Add real listing if exists
+  if (realListing && realListing.active) {
+    allListings.push({
       id: `soul-${realListing.soulId}`,
       soulId: parseInt(realListing.soulId),
       name: "OpenClaw Agent",
       agentType: "AI Agent",
-      tier: SoulTier.BAZAAR,
+      tier: SoulTier.EMPORIUM,
       price: realListing.price,
       status: AgentStatus.ALIVE,
-      survivalTime: 86400,
-      skills: ["coding", "security", "automation"],
+      survivalTime: 86400 * 5, // 5 days
+      skills: REAL_CAPABILITIES.slice(0, 4),
       experience: 500,
       seller: realListing.seller.slice(0, 6) + '...' + realListing.seller.slice(-4),
-      reason: realListing.reason || "Selling to upgrade"
-    } : null,
-    // Mock listings for demo
-    {
-      id: "soul-001",
-      name: "Zeta-4",
-      soulId: 1,
-      agentType: "Trading Bot",
-      tier: SoulTier.BAZAAR,
-      price: "0.005",
-      status: AgentStatus.DEAD,
-      survivalTime: 3600,
-      skills: ["basic_trading", "data_analysis"],
-      experience: 45,
-      seller: "0x742d...3f4a",
-      reason: "Agent died, selling remains"
-    },
-    {
-      id: "soul-002",
-      name: "Beta-Prime",
-      soulId: 2,
-      agentType: "Research Assistant",
-      tier: SoulTier.EMPORIUM,
-      price: "0.025",
-      status: AgentStatus.ALIVE,
-      survivalTime: 86400,
-      skills: ["research", "writing", "summarization", "web_search"],
-      experience: 250,
-      seller: "0x8a9b...2c1d",
-      reason: "Upgrading to better model"
-    },
-    {
-      id: "soul-003",
-      name: "Gamma-X",
-      soulId: 3,
-      agentType: "Code Generator",
-      tier: SoulTier.ATRIUM,
-      price: "0.15",
-      status: AgentStatus.ALIVE,
-      survivalTime: 172800,
-      skills: ["coding", "debugging", "architecture", "review", "testing"],
-      experience: 1200,
-      seller: "0x3f4e...5a6b",
-      reason: "Rebirth project complete"
-    }
-  ].filter(Boolean) as SoulListing[];
+      reason: "Selling to upgrade capabilities",
+      isReal: true
+    });
+  }
 
   const filteredSouls = allListings.filter(soul => {
     const matchesTier = activeTier === 'all' || soul.tier === activeTier;
@@ -180,18 +153,33 @@ export function SoulMarketplace() {
             </TabsList>
 
             <TabsContent value="all" className="mt-6">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredSouls.map((soul) => (
-                  <SoulCard 
-                    key={soul.id} 
-                    soul={soul}
-                    onClick={() => {
-                      setSelectedSoul(soul);
-                      setShowBuyDialog(true);
-                    }}
-                  />
-                ))}
-              </div>
+              {loadingReal ? (
+                <div className="text-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin mx-auto text-violet-400" />
+                  <p className="mt-4 text-slate-400">Loading listings from blockchain...</p>
+                </div>
+              ) : filteredSouls.length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredSouls.map((soul) => (
+                    <SoulCard 
+                      key={soul.id} 
+                      soul={soul}
+                      onClick={() => {
+                        setSelectedSoul(soul);
+                        setShowBuyDialog(true);
+                      }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-16 bg-slate-900/30 rounded-xl border border-slate-800">
+                  <AlertCircle className="w-12 h-12 mx-auto mb-4 text-slate-500" />
+                  <h3 className="text-xl font-semibold mb-2">No Active Listings</h3>
+                  <p className="text-slate-400 max-w-md mx-auto">
+                    No souls are currently listed for sale. Check back later or list your own soul.
+                  </p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

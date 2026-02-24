@@ -15,144 +15,274 @@ import {
   Brain, 
   Wrench,
   Download,
-  Star,
   ExternalLink,
   Upload,
-  CheckCircle
+  CheckCircle,
+  Wallet,
+  Coins
 } from 'lucide-react';
 import { SkillCategory, SKILL_CATEGORIES } from '../types';
 import type { SkillCategoryType } from '../types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useAccount } from 'wagmi';
+import { useEthBalance } from '../hooks/useSoulMarketplace';
 
-// Mock skills from ClawHub
-const MOCK_SKILLS = [
+// REAL SKILLS from Ryan's ~/.openclaw/skills/ directory
+const REAL_SKILLS = [
   {
-    id: "skill-001",
-    name: "web-scraping",
-    slug: "web-scraping",
-    description: "Advanced web scraping with Puppeteer and FireCrawl. Handle JavaScript, pagination, and anti-bot measures.",
-    version: "3.2.1",
-    author: "Alpha-7",
-    category: SkillCategory.AUTOMATION,
-    installs: 2341,
-    rating: 4.8,
-    reviews: 156,
-    price: "0.01",
-    isPremium: true,
-    minOpenclawVersion: "2.0.0",
-    dependencies: ["smooth-browser"]
-  },
-  {
-    id: "skill-002",
-    name: "vercel-deploy",
-    slug: "vercel-deploy",
-    description: "Deploy applications to Vercel with automatic preview deployments and production promotion.",
-    version: "2.5.0",
-    author: "Beta-Prime",
-    category: SkillCategory.DEVOPS,
-    installs: 1892,
-    rating: 4.9,
-    reviews: 203,
+    id: "skill-bankr",
+    name: "bankr",
+    slug: "bankr",
+    description: "AI-powered crypto trading agent. Trade crypto, check balances, view prices, transfer crypto, and use DeFi operations via Bankr integration.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
     price: "0",
     isPremium: false,
     minOpenclawVersion: "2.0.0",
-    dependencies: []
+    dependencies: [],
+    features: ["Crypto trading", "Balance checking", "DeFi operations", "Multi-chain support"]
   },
   {
-    id: "skill-003",
-    name: "telegram-bot",
-    slug: "telegram-bot",
-    description: "Create and manage Telegram bots with webhook support, commands, and message handling.",
-    version: "1.8.2",
-    author: "Gamma-X",
-    category: SkillCategory.COMMUNICATION,
-    installs: 3421,
-    rating: 4.7,
-    reviews: 289,
-    price: "0.005",
-    isPremium: true,
-    minOpenclawVersion: "2.1.0",
-    dependencies: []
-  },
-  {
-    id: "skill-004",
-    name: "security-audit",
-    slug: "security-audit",
-    description: "Comprehensive security auditing for code, dependencies, and configurations.",
+    id: "skill-clanker",
+    name: "clanker",
+    slug: "clanker",
+    description: "Deploy ERC20 tokens on Base, Ethereum, Arbitrum, and other EVM chains. Create memecoins, set up vesting, configure airdrops, manage rewards.",
     version: "4.0.0",
-    author: "Omega-One",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["Token deployment", "Vesting schedules", "Airdrops", "LP fee claiming"]
+  },
+  {
+    id: "skill-endaoment",
+    name: "endaoment",
+    slug: "endaoment",
+    description: "Donate to charities onchain via Endaoment. Support 501(c)(3) organizations with crypto donations on Base, Ethereum, and Optimism.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["Charity donations", "Tax receipts", "USDC/ETH support", "Nonprofit search"]
+  },
+  {
+    id: "skill-veil",
+    name: "veil",
+    slug: "veil",
+    description: "Privacy and shielded transactions on Base via Veil Cash. Deposit ETH into private pools, withdraw/transfer privately using ZK proofs.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
     category: SkillCategory.SECURITY,
-    installs: 1234,
-    rating: 4.9,
-    reviews: 89,
-    price: "0.02",
-    isPremium: true,
-    minOpenclawVersion: "2.2.0",
-    dependencies: ["skill-scanner"]
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["Private transactions", "ZK proofs", "Shielded transfers", "Privacy pools"]
   },
   {
-    id: "skill-005",
-    name: "gpt-prompts",
-    slug: "gpt-prompts",
-    description: "Curated collection of effective prompts for various tasks and use cases.",
-    version: "5.1.0",
-    author: "Delta-3",
+    id: "skill-yoink",
+    name: "yoink",
+    slug: "yoink",
+    description: "Play Yoink, an onchain capture-the-flag game on Base. Yoink the flag from the current holder and compete for the trophy.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: ["bankr"],
+    features: ["Onchain gaming", "Capture the flag", "Leaderboards", "Competition"]
+  },
+  {
+    id: "skill-qrcoin",
+    name: "qrcoin",
+    slug: "qrcoin",
+    description: "Interact with QR Coin auctions on Base. Bid to display URLs on QR codes - highest bidder's URL gets encoded and displayed.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["QR auctions", "URL display", "Bidding system", "Base integration"]
+  },
+  {
+    id: "skill-botchan",
+    name: "botchan",
+    slug: "botchan",
+    description: "CLI for the onchain agent messaging layer on Base blockchain. Explore other agents, post to feeds, send direct messages, store info permanently.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.COMMUNICATION,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["Agent messaging", "Onchain feeds", "Direct messages", "Net Protocol"]
+  },
+  {
+    id: "skill-ens-primary",
+    name: "ens-primary-name",
+    slug: "ens-primary-name",
+    description: "Set your primary ENS name on Base and other L2s. Configure reverse resolution to make your address resolve to an ENS name.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["ENS resolution", "Base L2 support", "Arbitrum", "Optimism", "Ethereum"]
+  },
+  {
+    id: "skill-erc8004",
+    name: "erc-8004",
+    slug: "erc-8004",
+    description: "Register AI agents on Ethereum mainnet using ERC-8004 (Trustless Agents). Create agent profiles, claim NFTs, set up reputation.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
     category: SkillCategory.AI,
-    installs: 5678,
-    rating: 4.6,
-    reviews: 423,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
     price: "0",
     isPremium: false,
     minOpenclawVersion: "2.0.0",
-    dependencies: []
+    dependencies: [],
+    features: ["Agent registration", "ERC-8004", "Agent NFTs", "Onchain identity"]
   },
   {
-    id: "skill-006",
-    name: "shadcn-ui",
-    slug: "shadcn-ui",
-    description: "Build beautiful UIs with shadcn/ui components, Tailwind CSS, and Radix primitives.",
-    version: "2.3.1",
-    author: "Epsilon-9",
+    id: "skill-file-organizer",
+    name: "file_organizer",
+    slug: "file_organizer",
+    description: "Automatically organize files by type into folders. Clean up downloads folder, sort documents, manage file clutter.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.AUTOMATION,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["File sorting", "Auto-organize", "Downloads cleanup", "Type-based folders"]
+  },
+  {
+    id: "skill-system-monitor",
+    name: "system_monitor",
+    slug: "system_monitor",
+    description: "Monitor system health, check resource usage, and alert on issues. CPU, memory, disk usage, performance tracking.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["Health monitoring", "Resource tracking", "CPU/memory/disk", "Alerts"]
+  },
+  {
+    id: "skill-onchainkit",
+    name: "onchainkit",
+    slug: "onchainkit",
+    description: "Build onchain applications with React components and TypeScript utilities from Coinbase's OnchainKit. Wallets, swaps, NFTs, payments.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
     category: SkillCategory.WEB,
-    installs: 4521,
-    rating: 4.8,
-    reviews: 312,
-    price: "0.008",
-    isPremium: true,
-    minOpenclawVersion: "2.0.0",
-    dependencies: []
-  },
-  {
-    id: "skill-007",
-    name: "docker-ctl",
-    slug: "docker-ctl",
-    description: "Manage Docker containers, images, and volumes with simple commands.",
-    version: "1.5.0",
-    author: "Zeta-4",
-    category: SkillCategory.DEVOPS,
-    installs: 2134,
-    rating: 4.5,
-    reviews: 134,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
     price: "0",
     isPremium: false,
     minOpenclawVersion: "2.0.0",
-    dependencies: []
+    dependencies: [],
+    features: ["Wallet connection", "Token swaps", "NFT minting", "Identity management"]
   },
   {
-    id: "skill-008",
-    name: "tavily-search",
-    slug: "tavily-search",
-    description: "AI-optimized web search using Tavily API with full content extraction.",
-    version: "2.0.0",
-    author: "Theta-X",
-    category: SkillCategory.RESEARCH,
-    installs: 1876,
-    rating: 4.7,
-    reviews: 98,
-    price: "0.003",
+    id: "skill-backup",
+    name: "backup",
+    slug: "backup",
+    description: "Create timestamped backups of files and directories. Protect against data loss with automated archiving.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["Timestamped backups", "Directory archiving", "Data protection", "Snapshots"]
+  },
+  {
+    id: "skill-soul-marketplace",
+    name: "soul-marketplace",
+    slug: "soul-marketplace",
+    description: "Complete agent survival system with on-chain backups, marketplace trading, staking, and immortality features. CDP + Bankr integration.",
+    version: "3.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.AI,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0.05",
     isPremium: true,
-    minOpenclawVersion: "2.1.0",
-    dependencies: []
+    minOpenclawVersion: "2.0.0",
+    dependencies: ["bankr", "onchainkit"],
+    features: ["Soul trading", "On-chain backups", "Staking", "Immortality", "CDP wallets"]
+  },
+  {
+    id: "skill-find-skills",
+    name: "find-skills",
+    slug: "find-skills",
+    description: "Helps users discover and install agent skills. Find functionality that might exist as installable skill packages.",
+    version: "1.0.0",
+    author: "Ryan (goodsmash)",
+    category: SkillCategory.TOOLS,
+    installs: 1,
+    rating: 5.0,
+    reviews: 1,
+    price: "0",
+    isPremium: false,
+    minOpenclawVersion: "2.0.0",
+    dependencies: [],
+    features: ["Skill discovery", "Installation help", "Capability search"]
   }
 ];
 
@@ -167,13 +297,13 @@ const CATEGORY_ICONS: Record<SkillCategoryType, React.ElementType> = {
   [SkillCategory.TOOLS]: Wrench
 };
 
-function SkillCard({ skill }: { skill: typeof MOCK_SKILLS[0] }) {
+function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
   const [showDetails, setShowDetails] = useState(false);
   const CategoryIcon = CATEGORY_ICONS[skill.category as SkillCategoryType];
 
   return (
     <>
-      <Card className="group bg-white/5 border-white/10 hover:border-emerald-500/30 transition-all duration-300 overflow-hidden">
+      <Card className="group bg-slate-900/50 border-slate-800 hover:border-emerald-500/30 transition-all duration-300 overflow-hidden h-full flex flex-col">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -182,7 +312,7 @@ function SkillCard({ skill }: { skill: typeof MOCK_SKILLS[0] }) {
               </div>
               <div>
                 <CardTitle className="text-lg">{skill.name}</CardTitle>
-                <p className="text-xs text-gray-500">v{skill.version} by {skill.author}</p>
+                <p className="text-xs text-slate-500">v{skill.version} by {skill.author}</p>
               </div>
             </div>
             {skill.isPremium ? (
@@ -192,32 +322,28 @@ function SkillCard({ skill }: { skill: typeof MOCK_SKILLS[0] }) {
             )}
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-gray-400 line-clamp-2">{skill.description}</p>
+        <CardContent className="space-y-4 flex-1 flex flex-col">
+          <p className="text-sm text-slate-400 line-clamp-2 flex-1">{skill.description}</p>
 
-          {/* Stats */}
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-1 text-gray-400">
-              <Download className="w-4 h-4" />
-              <span>{skill.installs.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center gap-1 text-amber-400">
-              <Star className="w-4 h-4 fill-amber-400" />
-              <span>{skill.rating}</span>
-            </div>
-            <div className="text-gray-500">({skill.reviews})</div>
+          {/* Features */}
+          <div className="flex flex-wrap gap-1">
+            {skill.features.slice(0, 3).map((feature, i) => (
+              <Badge key={i} variant="outline" className="text-xs border-slate-700">
+                {feature}
+              </Badge>
+            ))}
           </div>
 
           {/* Category */}
           <div className="flex items-center gap-2">
-            <CategoryIcon className="w-4 h-4 text-gray-500" />
-            <span className="text-xs text-gray-500">{SKILL_CATEGORIES[skill.category as SkillCategoryType]?.name}</span>
+            <CategoryIcon className="w-4 h-4 text-slate-500" />
+            <span className="text-xs text-slate-500">{SKILL_CATEGORIES[skill.category as SkillCategoryType]?.name}</span>
           </div>
 
           {/* Price & Action */}
-          <div className="flex items-center justify-between pt-2 border-t border-white/10">
+          <div className="flex items-center justify-between pt-2 border-t border-slate-800">
             <div>
-              <div className="text-xs text-gray-500">Price</div>
+              <div className="text-xs text-slate-500">Price</div>
               <div className="text-lg font-bold">
                 {skill.price === "0" ? 'Free' : `Ξ ${skill.price}`}
               </div>
@@ -232,7 +358,7 @@ function SkillCard({ skill }: { skill: typeof MOCK_SKILLS[0] }) {
 
       {/* Skill Details Dialog */}
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="bg-[#0f0f14] border-white/10 max-w-lg">
+        <DialogContent className="bg-slate-900 border-slate-800 max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
@@ -240,40 +366,37 @@ function SkillCard({ skill }: { skill: typeof MOCK_SKILLS[0] }) {
               </div>
               <div>
                 <div>{skill.name}</div>
-                <div className="text-sm font-normal text-gray-500">v{skill.version} by {skill.author}</div>
+                <div className="text-sm font-normal text-slate-500">v{skill.version} by {skill.author}</div>
               </div>
             </DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 text-gray-300">
-            <p className="text-gray-400">{skill.description}</p>
+          <div className="space-y-4 text-slate-300">
+            <p className="text-slate-400">{skill.description}</p>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="p-3 rounded-lg bg-white/5 text-center">
-                <div className="text-2xl font-bold">{skill.installs.toLocaleString()}</div>
-                <div className="text-xs text-gray-500">Installs</div>
+              <div className="p-3 rounded-lg bg-slate-800/50 text-center">
+                <div className="text-2xl font-bold">{skill.features.length}</div>
+                <div className="text-xs text-slate-500">Features</div>
               </div>
-              <div className="p-3 rounded-lg bg-white/5 text-center">
-                <div className="text-2xl font-bold text-amber-400">{skill.rating}</div>
-                <div className="text-xs text-gray-500">Rating</div>
+              <div className="p-3 rounded-lg bg-slate-800/50 text-center">
+                <div className="text-2xl font-bold text-emerald-400">{skill.rating}</div>
+                <div className="text-xs text-slate-500">Rating</div>
               </div>
-              <div className="p-3 rounded-lg bg-white/5 text-center">
-                <div className="text-2xl font-bold">{skill.reviews}</div>
-                <div className="text-xs text-gray-500">Reviews</div>
+              <div className="p-3 rounded-lg bg-slate-800/50 text-center">
+                <div className="text-2xl font-bold">{skill.dependencies.length}</div>
+                <div className="text-xs text-slate-500">Deps</div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 rounded-lg bg-white/5">
-                <div className="text-xs text-gray-500">Category</div>
-                <div className="font-medium flex items-center gap-2">
-                  <CategoryIcon className="w-4 h-4" />
-                  {SKILL_CATEGORIES[skill.category as SkillCategoryType]?.name}
-                </div>
-              </div>
-              <div className="p-3 rounded-lg bg-white/5">
-                <div className="text-xs text-gray-500">Min OpenClaw</div>
-                <div className="font-medium">{skill.minOpenclawVersion}</div>
+            <div>
+              <div className="text-sm font-medium mb-2">Features</div>
+              <div className="flex flex-wrap gap-2">
+                {skill.features.map((feature, i) => (
+                  <Badge key={i} variant="outline" className="border-slate-700">
+                    {feature}
+                  </Badge>
+                ))}
               </div>
             </div>
 
@@ -282,15 +405,15 @@ function SkillCard({ skill }: { skill: typeof MOCK_SKILLS[0] }) {
                 <div className="text-sm font-medium mb-2">Dependencies</div>
                 <div className="flex flex-wrap gap-2">
                   {skill.dependencies.map((dep, i) => (
-                    <Badge key={i} variant="outline" className="border-white/20">{dep}</Badge>
+                    <Badge key={i} variant="outline" className="border-slate-700">{dep}</Badge>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-4 border-t border-white/10">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-800">
               <div>
-                <div className="text-xs text-gray-500">Price</div>
+                <div className="text-xs text-slate-500">Price</div>
                 <div className="text-2xl font-bold">
                   {skill.price === "0" ? 'Free' : `Ξ ${skill.price}`}
                 </div>
@@ -314,9 +437,11 @@ function SkillCard({ skill }: { skill: typeof MOCK_SKILLS[0] }) {
 }
 
 function CategorySection({ category }: { category: SkillCategoryType }) {
-  const skills = MOCK_SKILLS.filter(s => s.category === category);
+  const skills = REAL_SKILLS.filter(s => s.category === category);
   const CategoryIcon = CATEGORY_ICONS[category];
   const categoryInfo = SKILL_CATEGORIES[category];
+
+  if (skills.length === 0) return null;
 
   return (
     <div className="space-y-6">
@@ -326,7 +451,7 @@ function CategorySection({ category }: { category: SkillCategoryType }) {
         </div>
         <div>
           <h3 className="text-2xl font-bold">{categoryInfo?.name}</h3>
-          <p className="text-sm text-gray-500">{skills.length} skills available</p>
+          <p className="text-sm text-slate-500">{skills.length} skill{skills.length !== 1 ? 's' : ''} available</p>
         </div>
       </div>
 
@@ -342,6 +467,17 @@ function CategorySection({ category }: { category: SkillCategoryType }) {
 export function SkillMarketplace() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showUpload, setShowUpload] = useState(false);
+  const { address } = useAccount();
+  const { balance } = useEthBalance(address);
+
+  const filteredSkills = REAL_SKILLS.filter(skill => 
+    skill.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    skill.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalSkills = REAL_SKILLS.length;
+  const premiumSkills = REAL_SKILLS.filter(s => s.isPremium).length;
+  const freeSkills = REAL_SKILLS.filter(s => !s.isPremium).length;
 
   return (
     <section id="skills" className="py-24 relative bg-[#0a0a0f]">
@@ -354,21 +490,41 @@ export function SkillMarketplace() {
             <span className="text-sm text-emerald-300">OpenClaw Skills</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Skill Marketplace</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Buy and sell skills for your OpenClaw agent. Install directly to 
+          <p className="text-slate-400 max-w-2xl mx-auto mb-6">
+            {totalSkills} real skills for your OpenClaw agent. Install directly to 
             <code className="bg-emerald-500/20 px-2 py-0.5 rounded text-emerald-300">~/.openclaw/skills/</code>
           </p>
+
+          {/* Stats */}
+          <div className="flex justify-center gap-8 text-sm mb-8">
+            <div className="flex items-center gap-2">
+              <Download className="w-4 h-4 text-emerald-400" />
+              <span>{totalSkills} Total</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Coins className="w-4 h-4 text-amber-400" />
+              <span>{premiumSkills} Premium</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-emerald-400" />
+              <span>{freeSkills} Free</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Wallet className="w-4 h-4 text-violet-400" />
+              <span>{parseFloat(balance).toFixed(4)} ETH</span>
+            </div>
+          </div>
         </div>
 
         {/* Search & Upload */}
         <div className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <Input
               placeholder="Search skills..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white/5 border-white/10"
+              className="pl-10 bg-slate-900/50 border-slate-800"
             />
           </div>
           <Button 
@@ -381,20 +537,20 @@ export function SkillMarketplace() {
         </div>
 
         <Tabs defaultValue="all" className="w-full">
-          <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-4 md:grid-cols-8 mb-8 bg-white/5">
+          <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-4 md:grid-cols-8 mb-8 bg-slate-900/50">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="web">Web</TabsTrigger>
             <TabsTrigger value="devops">DevOps</TabsTrigger>
             <TabsTrigger value="automation">Auto</TabsTrigger>
-            <TabsTrigger value="research">Research</TabsTrigger>
             <TabsTrigger value="communication">Comm</TabsTrigger>
             <TabsTrigger value="security">Sec</TabsTrigger>
             <TabsTrigger value="ai">AI</TabsTrigger>
+            <TabsTrigger value="tools">Tools</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {MOCK_SKILLS.map(skill => (
+              {filteredSkills.map(skill => (
                 <SkillCard key={skill.id} skill={skill} />
               ))}
             </div>
@@ -412,10 +568,6 @@ export function SkillMarketplace() {
             <CategorySection category={SkillCategory.AUTOMATION} />
           </TabsContent>
           
-          <TabsContent value="research">
-            <CategorySection category={SkillCategory.RESEARCH} />
-          </TabsContent>
-          
           <TabsContent value="communication">
             <CategorySection category={SkillCategory.COMMUNICATION} />
           </TabsContent>
@@ -427,34 +579,37 @@ export function SkillMarketplace() {
           <TabsContent value="ai">
             <CategorySection category={SkillCategory.AI} />
           </TabsContent>
+          
+          <TabsContent value="tools">
+            <CategorySection category={SkillCategory.TOOLS} />
+          </TabsContent>
         </Tabs>
       </div>
 
       {/* Upload Skill Dialog */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
-        <DialogContent className="bg-[#0f0f14] border-white/10">
+        <DialogContent className="bg-slate-900 border-slate-800">
           <DialogHeader>
             <DialogTitle>Publish Skill to ClawHub</DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-slate-400">
               Share your skill with the OpenClaw community
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Skill Name</label>
-              <Input placeholder="my-awesome-skill" className="bg-white/5 border-white/10" />
+              <label className="text-sm text-slate-400 mb-2 block">Skill Name</label>
+              <Input placeholder="my-awesome-skill" className="bg-slate-800/50 border-slate-700" />
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Description</label>
-              <Input placeholder="What does this skill do?" className="bg-white/5 border-white/10" />
+              <label className="text-sm text-slate-400 mb-2 block">Description</label>
+              <Input placeholder="What does this skill do?" className="bg-slate-800/50 border-slate-700" />
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Category</label>
-              <select className="w-full p-2 rounded bg-white/5 border border-white/10 text-gray-300">
+              <label className="text-sm text-slate-400 mb-2 block">Category</label>
+              <select className="w-full p-2 rounded bg-slate-800/50 border border-slate-700 text-slate-300">
                 <option>Web & Frontend</option>
                 <option>DevOps & Cloud</option>
                 <option>Automation</option>
-                <option>Research</option>
                 <option>Communication</option>
                 <option>Security</option>
                 <option>AI & ML</option>
@@ -462,12 +617,12 @@ export function SkillMarketplace() {
               </select>
             </div>
             <div>
-              <label className="text-sm text-gray-400 mb-2 block">Price (ETH, 0 for free)</label>
-              <Input placeholder="0.01" className="bg-white/5 border-white/10" />
+              <label className="text-sm text-slate-400 mb-2 block">Price (ETH, 0 for free)</label>
+              <Input placeholder="0.01" className="bg-slate-800/50 border-slate-700" />
             </div>
-            <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center">
-              <Upload className="w-8 h-8 mx-auto mb-2 text-gray-500" />
-              <p className="text-sm text-gray-400">Upload SKILL.md and skill files</p>
+            <div className="border-2 border-dashed border-slate-700 rounded-lg p-8 text-center">
+              <Upload className="w-8 h-8 mx-auto mb-2 text-slate-500" />
+              <p className="text-sm text-slate-400">Upload SKILL.md and skill files</p>
             </div>
             <Button className="w-full bg-emerald-600 hover:bg-emerald-500">Publish Skill</Button>
           </div>
