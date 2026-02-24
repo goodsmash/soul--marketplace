@@ -1,8 +1,14 @@
 {
-  "last_health_check": 1771962421.185662,
-  "issues_detected": 6,
-  "issues_resolved": 4,
+  "last_health_check": 1771969618.1476004,
+  "issues_detected": 15,
+  "issues_resolved": 10,
   "healing_actions": [
+    "Backup failed: name 'sys' is not defined",
+    "Heartbeat failed: when sending a str, it must be a hex string. Got: '0x...'",
+    "Backup failed: name 'sys' is not defined",
+    "Heartbeat failed: when sending a str, it must be a hex string. Got: '0x...'",
+    "Backup failed: name 'sys' is not defined",
+    "Heartbeat failed: when sending a str, it must be a hex string. Got: '0x...'",
     "Backup failed: name 'sys' is not defined",
     "Heartbeat failed: when sending a str, it must be a hex string. Got: '0x...'",
     "Backup failed: name 'sys' is not defined",
