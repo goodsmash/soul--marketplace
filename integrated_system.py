@@ -24,6 +24,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 
+# Load environment variables first
+from dotenv import load_dotenv
+load_dotenv()
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,6 +53,17 @@ class IntegratedSoulSystem:
     
     def _init_subsystems(self):
         """Initialize all available subsystems"""
+        
+        # 0. CDP Wallet (REAL MODE)
+        try:
+            from autonomous_agent import AutonomousSoulAgent
+            self.cdp_agent = AutonomousSoulAgent(self.agent_id)
+            self.wallet_address = self.cdp_agent.wallet_address
+            logger.info(f"✅ CDP Wallet loaded: {self.wallet_address}")
+        except Exception as e:
+            logger.warning(f"⚠️ CDP Wallet: {e}")
+            self.cdp_agent = None
+            self.wallet_address = None
         
         # 1. Work System (earning)
         try:
@@ -175,8 +190,16 @@ class IntegratedSoulSystem:
                 logger.info("💼 Finding and doing work...")
                 work_sys = self.subsystems['work']
                 
-                # Get balance-based recommendations
-                balance = 0.014  # Would get from wallet
+                # Get REAL balance from CDP wallet
+                balance = 0.014  # Default fallback
+                if self.cdp_agent and self.cdp_agent.wallet_address:
+                    try:
+                        import asyncio
+                        balance = asyncio.run(self.cdp_agent.get_balance())
+                        logger.info(f"💰 Real wallet balance: {balance} ETH")
+                    except Exception as e:
+                        logger.warning(f"Could not get real balance: {e}")
+                
                 recs = work_sys.find_work_to_survive(balance)
                 
                 for rec in recs[:2]:  # Do up to 2 jobs
