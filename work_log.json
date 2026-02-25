@@ -363,7 +363,63 @@
       "description": "system_check",
       "value": 0.0001,
       "capability": "system_check"
+    },
+    {
+      "timestamp": "2026-02-25T00:47:13.020262",
+      "type": "file_organize",
+      "description": "file_organize",
+      "value": 0.0001,
+      "capability": "file_organize"
+    },
+    {
+      "timestamp": "2026-02-25T00:47:13.021797",
+      "type": "system_check",
+      "description": "system_check",
+      "value": 0.0001,
+      "capability": "system_check"
+    },
+    {
+      "timestamp": "2026-02-25T01:49:05.792524",
+      "type": "file_organize",
+      "description": "file_organize",
+      "value": 0.0001,
+      "capability": "file_organize"
+    },
+    {
+      "timestamp": "2026-02-25T01:49:05.793679",
+      "type": "system_check",
+      "description": "system_check",
+      "value": 0.0001,
+      "capability": "system_check"
+    },
+    {
+      "timestamp": "2026-02-25T03:45:01.064417",
+      "type": "file_organize",
+      "description": "file_organize",
+      "value": 0.0001,
+      "capability": "file_organize"
+    },
+    {
+      "timestamp": "2026-02-25T03:45:01.064975",
+      "type": "system_check",
+      "description": "system_check",
+      "value": 0.0001,
+      "capability": "system_check"
+    },
+    {
+      "timestamp": "2026-02-25T03:47:22.688088",
+      "type": "file_organize",
+      "description": "file_organize",
+      "value": 0.0001,
+      "capability": "file_organize"
+    },
+    {
+      "timestamp": "2026-02-25T03:47:22.688708",
+      "type": "system_check",
+      "description": "system_check",
+      "value": 0.0001,
+      "capability": "system_check"
     }
   ],
-  "total_value": 0.023199999999999988
+  "total_value": 0.023999999999999983
 }

@@ -1,0 +1,12 @@
+{
+  "network": "base",
+  "chainId": 8453,
+  "deployer": "0x80EF948E905D2e12E4256ee33B2035b4Ec057AB6",
+  "feeRecipient": "0x80EF948E905D2e12E4256ee33B2035b4Ec057AB6",
+  "mintFeeWei": "10000000000000",
+  "contracts": {
+    "SoulTokenV2": "0x6e338A946275b0E949faCF6f8c5A93F93684A1e0",
+    "SoulMarketplaceV2": "0x72bc374Bdb5Dd162635c2e5492f001210E2317a8"
+  },
+  "timestamp": "2026-02-25T06:37:14.074Z"
+}

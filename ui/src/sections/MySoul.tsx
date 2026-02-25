@@ -23,18 +23,22 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { SoulTier, AgentStatus } from '../types';
+import { SoulTier, AgentStatus, CONTRACT_ADDRESSES } from '../types';
 import { formatEther } from 'viem';
-import { useAccount } from 'wagmi';
-import { useHasSoul, useSoulDetails, useMintFee, useMintSoul, useEthBalance, useListSoul, useListing, useCancelListing } from '../hooks/useSoulMarketplace';
+import { useAccount, useChainId } from 'wagmi';
+import { useHasSoul, useSoulDetails, useMintFee, useMintSoul, useEthBalance, useApproveSoul, useListSoul, useListing, useCancelListing } from '../hooks/useSoulMarketplace';
 
 export function MySoul() {
   const { address } = useAccount();
+  const chainId = useChainId();
+  const expectedChainId = Number((import.meta as any).env?.VITE_CHAIN_ID || 8453);
+  const wrongNetwork = chainId !== expectedChainId;
   const { hasSoul, soulId, isLoading: loadingSoul } = useHasSoul(address);
-  const { soul, isLoading: loadingDetails } = useSoulDetails(soulId);
+  const { soul, isLoading: loadingDetails } = useSoulDetails(soulId, hasSoul);
   const { mintFee } = useMintFee();
   const { balance } = useEthBalance(address);
   const { mint, isPending: isMinting, hash: mintHash } = useMintSoul();
+  const { approve, isPending: isApproving } = useApproveSoul();
   const { list, isPending: isListing } = useListSoul();
   const { listing: myListing } = useListing(soulId);
   const { cancel, isPending: isCancelling } = useCancelListing();
@@ -68,10 +72,26 @@ export function MySoul() {
 
   const handleMint = async () => {
     try {
-      await mint(mintForm.name, mintForm.creature, mintForm.ipfsHash, mintForm.capabilities);
+      // Ensure unique ipfsHash so mints don't fail due duplicate hash checks.
+      const uniqueHash = mintForm.ipfsHash && mintForm.ipfsHash !== 'QmDefault'
+        ? mintForm.ipfsHash
+        : `QmSoul${Date.now().toString(36)}${(address || '').slice(2, 8)}`;
+
+      await mint(mintForm.name, mintForm.creature, uniqueHash, mintForm.capabilities);
       setShowMintDialog(false);
     } catch (err) {
       console.error('Mint failed:', err);
+      alert('Mint failed. Check wallet network (Base), balance, and try again.');
+    }
+  };
+
+  const handleApprove = async () => {
+    if (soulId > 0) {
+      try {
+        await approve(soulId);
+      } catch (err) {
+        console.error('Approve failed:', err);
+      }
     }
   };
 
@@ -251,6 +271,14 @@ export function MySoul() {
           <p className="text-slate-400">Manage your agent soul, skills, and survival</p>
         </div>
 
+        {wrongNetwork && (
+          <div className="mb-6 p-4 bg-amber-900/30 border border-amber-700 rounded-lg">
+            <p className="text-sm text-amber-300">
+              Wrong wallet network detected. Switch to {expectedChainId === 8453 ? 'Base Mainnet' : 'Base Sepolia'} to get accurate micro gas fees.
+            </p>
+          </div>
+        )}
+
         {/* Critical Alert */}
         {isCritical && (
           <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg">
@@ -295,6 +323,10 @@ export function MySoul() {
                 <div className="flex justify-between">
                   <span className="text-slate-400">Soul ID</span>
                   <span className="font-mono">#{soulId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Contract Mode</span>
+                  <span className="font-mono">{CONTRACT_ADDRESSES.useV2 ? 'V2' : 'V1'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">Birth Time</span>
@@ -473,7 +505,7 @@ export function MySoul() {
                   className="mt-1 bg-slate-800 border-slate-700"
                 />
                 <p className="text-xs text-slate-500 mt-1">
-                  Recommended: Ξ 0.01 - 0.05 for agents with basic capabilities
+                  Micro listing supported. Recommended start: Ξ 0.00001 - 0.001
                 </p>
               </div>
 
@@ -482,6 +514,22 @@ export function MySoul() {
                 <p className="text-lg font-mono text-emerald-400">Ξ {listPrice || '0'} ETH</p>
                 <p className="text-xs text-slate-500">Minus 2.5% platform fee</p>
               </div>
+
+              <Button 
+                onClick={handleApprove}
+                disabled={isApproving || soulId <= 0}
+                variant="outline"
+                className="w-full"
+              >
+                {isApproving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Approving...
+                  </>
+                ) : (
+                  '1) Approve Marketplace'
+                )}
+              </Button>
 
               <Button 
                 onClick={handleList}
@@ -494,7 +542,7 @@ export function MySoul() {
                     Listing...
                   </>
                 ) : (
-                  'List for Sale'
+                  '2) List for Sale'
                 )}
               </Button>
             </div>

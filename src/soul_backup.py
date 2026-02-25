@@ -18,6 +18,13 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 import logging
 
+# Load env from skill root if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / '.env')
+except Exception:
+    pass
+
 logger = logging.getLogger(__name__)
 
 class SoulBackupSystem:
@@ -148,19 +155,49 @@ class SoulBackupSystem:
     def _upload_to_ipfs(self, backup_data: Dict) -> str:
         """
         Upload soul backup to IPFS.
-        In production, this would use Pinata, NFT.Storage, or similar.
+
+        Real mode (preferred): uses Pinata if PINATA_JWT is configured.
+        Fallback mode: deterministic simulated CID (NOT globally retrievable).
         """
-        # For now, simulate IPFS upload
-        # In production:
-        # import requests
-        # response = requests.post("https://api.pinata.cloud/pinning/pinJSONToIPFS", ...)
-        # return response.json()["IpfsHash"]
-        
-        # Generate simulated IPFS hash
         data_json = json.dumps(backup_data, sort_keys=True)
+
+        pinata_jwt = os.getenv("PINATA_JWT")
+        pinata_api_key = os.getenv("PINATA_API_KEY")
+        pinata_secret = os.getenv("PINATA_SECRET_API_KEY")
+
+        if pinata_jwt or (pinata_api_key and pinata_secret):
+            try:
+                import requests
+                headers = {}
+                if pinata_jwt:
+                    headers["Authorization"] = f"Bearer {pinata_jwt}"
+                else:
+                    headers["pinata_api_key"] = pinata_api_key
+                    headers["pinata_secret_api_key"] = pinata_secret
+
+                response = requests.post(
+                    "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+                    headers=headers,
+                    json={
+                        "pinataMetadata": {
+                            "name": f"soul-backup-{backup_data.get('backup_id', 'unknown')}"
+                        },
+                        "pinataContent": backup_data,
+                    },
+                    timeout=30,
+                )
+                response.raise_for_status()
+                ipfs_hash = response.json().get("IpfsHash")
+                if not ipfs_hash:
+                    raise ValueError("Pinata response missing IpfsHash")
+                logger.info(f"📤 Uploaded to IPFS (Pinata): {ipfs_hash}")
+                return ipfs_hash
+            except Exception as e:
+                logger.warning(f"⚠️ Real IPFS upload failed, falling back to simulated CID: {e}")
+
+        # Fallback: simulated CID
         simulated_hash = "Qm" + hashlib.sha256(data_json.encode()).hexdigest()[:44]
-        
-        logger.info(f"📤 Uploaded to IPFS (simulated): {simulated_hash}")
+        logger.warning(f"⚠️ IPFS simulated CID (not globally retrievable): {simulated_hash}")
         return simulated_hash
     
     def restore_soul(self, backup_id: Optional[str] = None, 

@@ -63,16 +63,17 @@ export function SoulMarketplace() {
   const allListings: SoulListing[] = [];
   
   // Add real listing if exists
+  const displaySoulId = 0;
   if (realListing && realListing.active) {
     allListings.push({
-      id: `soul-${realListing.soulId}`,
-      soulId: parseInt(realListing.soulId),
+      id: `soul-${displaySoulId}`,
+      soulId: displaySoulId,
       name: "OpenClaw Agent",
       agentType: "AI Agent",
       tier: SoulTier.EMPORIUM,
       price: realListing.price,
       status: AgentStatus.ALIVE,
-      survivalTime: 86400 * 5, // 5 days
+      survivalTime: 86400 * 5,
       skills: REAL_CAPABILITIES.slice(0, 4),
       experience: 500,
       seller: realListing.seller.slice(0, 6) + '...' + realListing.seller.slice(-4),

@@ -1,14 +1,18 @@
 import { useReadContract, useWriteContract, useAccount, useBalance } from 'wagmi';
 import { parseEther, formatEther } from 'viem';
-import { CONTRACT_ADDRESSES, SOUL_TOKEN_ABI, MARKETPLACE_ABI } from '../types';
+import { SOUL_TOKEN_ABI, MARKETPLACE_ABI } from '../types';
 import type { SoulListing } from '../types';
+
+// V2 contracts only
+const SOUL_V2 = '0x6e338A946275b0E949faCF6f8c5A93F93684A1e0' as `0x${string}`;
+const MARKET_V2 = '0x72bc374Bdb5Dd162635c2e5492f001210E2317a8' as `0x${string}`;
 
 // Hook to get mint fee
 export function useMintFee() {
   const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESSES.soulToken as `0x${string}`,
+    address: SOUL_V2,
     abi: SOUL_TOKEN_ABI,
-    functionName: 'MINT_FEE',
+    functionName: 'mintFee',
   });
 
   return {
@@ -23,65 +27,61 @@ export function useHasSoul(address?: string) {
   const { address: connectedAddress } = useAccount();
   const targetAddress = address || connectedAddress;
 
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESSES.soulToken as `0x${string}`,
+  const soulIdQuery = useReadContract({
+    address: SOUL_V2,
     abi: SOUL_TOKEN_ABI,
     functionName: 'agentToSoul',
     args: targetAddress ? [targetAddress as `0x${string}`] : undefined,
-    query: {
-      enabled: !!targetAddress,
-    }
+    query: { enabled: !!targetAddress }
   });
 
-  const soulId = data ? Number(data as bigint) : 0;
+  const balanceQuery = useReadContract({
+    address: SOUL_V2,
+    abi: SOUL_TOKEN_ABI,
+    functionName: 'balanceOf',
+    args: targetAddress ? [targetAddress as `0x${string}`] : undefined,
+    query: { enabled: !!targetAddress }
+  });
+
+  const soulId = soulIdQuery.data !== undefined ? Number(soulIdQuery.data as bigint) : 0;
+  const balance = balanceQuery.data !== undefined ? Number(balanceQuery.data as bigint) : 0;
 
   return {
-    hasSoul: soulId > 0,
+    hasSoul: balance > 0,
     soulId,
-    isLoading,
-    error
+    balance,
+    isLoading: soulIdQuery.isLoading || balanceQuery.isLoading,
+    error: soulIdQuery.error || balanceQuery.error
   };
 }
 
 // Hook to get soul details
-export function useSoulDetails(soulId: number) {
+export function useSoulDetails(soulId: number, enabled: boolean = true) {
+  const canQuery = enabled && soulId >= 0;
+
   const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESSES.soulToken as `0x${string}`,
+    address: SOUL_V2,
     abi: SOUL_TOKEN_ABI,
-    functionName: 'getSoul',
-    args: soulId > 0 ? [BigInt(soulId)] : undefined,
-    query: {
-      enabled: soulId > 0,
-    }
+    functionName: 'souls',
+    args: canQuery ? [BigInt(soulId)] : undefined,
+    query: { enabled: canQuery }
   });
 
-  // Properly type the returned data
-  const soul = data as {
-    0: number; // birthTime
-    1: number; // deathTime
-    2: bigint; // totalEarnings
-    3: boolean; // isAlive
-    4: number; // capabilityCount
-    5: string; // name
-    6: string; // creature
-    7: string; // ipfsHash
-  } | undefined;
-
   return {
-    soul,
+    soul: data as any,
     isLoading,
     error
   };
 }
 
-// Hook to mint a soul
+// Hook to mint a new soul
 export function useMintSoul() {
   const { writeContract, isPending, error, data: hash } = useWriteContract();
   const { mintFee } = useMintFee();
 
   const mint = async (name: string, creature: string, ipfsHash: string, capabilities: string[]) => {
     await writeContract({
-      address: CONTRACT_ADDRESSES.soulToken as `0x${string}`,
+      address: SOUL_V2,
       abi: SOUL_TOKEN_ABI,
       functionName: 'mintSoul',
       args: [name, creature, ipfsHash, capabilities],
@@ -89,76 +89,39 @@ export function useMintSoul() {
     });
   };
 
-  return {
-    mint,
-    isPending,
-    error,
-    hash
-  };
+  return { mint, isPending, error, hash };
 }
 
-// Hook to get marketplace listing
-export function useListing(soulId: number) {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESSES.marketplace as `0x${string}`,
-    abi: MARKETPLACE_ABI,
-    functionName: 'getListing',
-    args: soulId > 0 ? [BigInt(soulId)] : undefined,
-    query: {
-      enabled: soulId > 0,
-    }
-  });
+// Hook to approve marketplace
+export function useApproveSoul() {
+  const { writeContract, isPending, error, data: hash } = useWriteContract();
 
-  // Properly type the returned data
-  const listingData = data as {
-    0: string; // seller
-    1: bigint; // price
-    2: number; // listedAt
-    3: boolean; // active
-  } | undefined;
-
-  if (!listingData) {
-    return { listing: null, isLoading, error };
-  }
-
-  const listing: SoulListing = {
-    id: `listing-${soulId}`,
-    soulId: soulId.toString(),
-    seller: listingData[0],
-    price: formatEther(listingData[1]),
-    saleType: 'full',
-    reason: '',
-    isDistress: false,
-    listedAt: listingData[2],
-    active: listingData[3],
+  const approve = async (soulId: number) => {
+    await writeContract({
+      address: SOUL_V2,
+      abi: SOUL_TOKEN_ABI,
+      functionName: 'approve',
+      args: [MARKET_V2, BigInt(soulId)],
+    });
   };
 
-  return {
-    listing,
-    isLoading,
-    error
-  };
+  return { approve, isPending, error, hash };
 }
 
-// Hook to list a soul for sale
+// Hook to list a soul
 export function useListSoul() {
   const { writeContract, isPending, error, data: hash } = useWriteContract();
 
   const list = async (soulId: number, price: string) => {
     await writeContract({
-      address: CONTRACT_ADDRESSES.marketplace as `0x${string}`,
+      address: MARKET_V2,
       abi: MARKETPLACE_ABI,
       functionName: 'listSoul',
       args: [BigInt(soulId), parseEther(price)],
     });
   };
 
-  return {
-    list,
-    isPending,
-    error,
-    hash
-  };
+  return { list, isPending, error, hash };
 }
 
 // Hook to buy a soul
@@ -167,7 +130,7 @@ export function useBuySoul() {
 
   const buy = async (soulId: number, price: string) => {
     await writeContract({
-      address: CONTRACT_ADDRESSES.marketplace as `0x${string}`,
+      address: MARKET_V2,
       abi: MARKETPLACE_ABI,
       functionName: 'buySoul',
       args: [BigInt(soulId)],
@@ -175,59 +138,70 @@ export function useBuySoul() {
     });
   };
 
-  return {
-    buy,
-    isPending,
-    error,
-    hash
-  };
+  return { buy, isPending, error, hash };
 }
 
-// Hook to get marketplace stats
-export function useMarketplaceStats() {
-  const { data, isLoading, error } = useReadContract({
-    address: CONTRACT_ADDRESSES.marketplace as `0x${string}`,
-    abi: MARKETPLACE_ABI,
-    functionName: 'getStats',
-  });
-
-  // Properly type the returned data
-  const statsData = data as [bigint, number] | undefined;
-
-  if (!statsData) {
-    return { volume: '0', sales: 0, isLoading, error };
-  }
-
-  return {
-    volume: formatEther(statsData[0]),
-    sales: statsData[1],
-    isLoading,
-    error
-  };
-}
-
-// Hook to cancel a listing
+// Hook to cancel listing
 export function useCancelListing() {
   const { writeContract, isPending, error, data: hash } = useWriteContract();
 
   const cancel = async (soulId: number) => {
     await writeContract({
-      address: CONTRACT_ADDRESSES.marketplace as `0x${string}`,
+      address: MARKET_V2,
       abi: MARKETPLACE_ABI,
       functionName: 'cancelListing',
       args: [BigInt(soulId)],
     });
   };
 
+  return { cancel, isPending, error, hash };
+}
+
+// Hook to get marketplace listing
+export function useListing(soulId: number, enabled: boolean = true) {
+  const canQuery = enabled && soulId >= 0;
+
+  const { data, isLoading, error } = useReadContract({
+    address: MARKET_V2,
+    abi: MARKETPLACE_ABI,
+    functionName: 'getListing',
+    args: canQuery ? [BigInt(soulId)] : undefined,
+    query: { enabled: canQuery }
+  });
+
+  const listing = data as SoulListing | undefined;
+
   return {
-    cancel,
-    isPending,
-    error,
-    hash
+    listing: listing ? {
+      seller: listing.seller,
+      price: formatEther(BigInt(listing.price.toString())),
+      listedAt: Number(listing.listedAt),
+      active: listing.active
+    } : null,
+    isLoading,
+    error
   };
 }
 
-// Hook to get user's ETH balance
+// Hook to get marketplace stats
+export function useMarketplaceStats() {
+  const { data, isLoading, error } = useReadContract({
+    address: MARKET_V2,
+    abi: MARKETPLACE_ABI,
+    functionName: 'getStats',
+  });
+
+  const stats = data as [bigint, bigint] | undefined;
+
+  return {
+    volume: stats ? formatEther(stats[0]) : '0',
+    sales: stats ? Number(stats[1]) : 0,
+    isLoading,
+    error
+  };
+}
+
+// Hook to get ETH balance
 export function useEthBalance(address?: string) {
   const { address: connectedAddress } = useAccount();
   const targetAddress = address || connectedAddress;

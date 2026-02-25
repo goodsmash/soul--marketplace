@@ -304,18 +304,16 @@ class AutonomousSoulAgent:
             from web3 import Web3
             from eth_account import Account
             
-            # Connect to Base Sepolia (testnet where wallet was created)
-            w3 = Web3(Web3.HTTPProvider('https://sepolia.base.org'))
-            
-            # SoulToken contract on Base Sepolia
-            contract_address = '0xd2565D67398Db41dfe88E7e826253756A440132a'  # Sepolia
-            
-            # Chain ID for Base Sepolia
-            chain_id = 84532
-            
-            # Get private key from environment
             import os
-            private_key = os.getenv('AGENT_PRIVATE_KEY')
+            # Network/config from env (defaults to Sepolia for cheap testing)
+            rpc_url = os.getenv('BASE_RPC', 'https://sepolia.base.org')
+            chain_id = int(os.getenv('CDP_NETWORK_ID', '84532'))
+            contract_address = os.getenv('SOUL_TOKEN_ADDRESS', '0xAC4136b1Fbe480dDB41C92EdAEaCf1E185F586d3')
+
+            w3 = Web3(Web3.HTTPProvider(rpc_url))
+
+            # Get private key from environment
+            private_key = os.getenv('AGENT_PRIVATE_KEY') or os.getenv('PRIVATE_KEY')
             
             if not private_key:
                 logger.error("❌ No AGENT_PRIVATE_KEY found in environment")
@@ -326,7 +324,19 @@ class AutonomousSoulAgent:
             # Create contract instance
             contract = w3.eth.contract(address=contract_address, abi=mint_abi)
             
-            # Build transaction
+            # Build cheapest viable EIP-1559 tx
+            mint_fee_eth = os.getenv('MINT_FEE_ETH', '0.00001')
+            mint_fee = w3.to_wei(mint_fee_eth, 'ether')
+            nonce = w3.eth.get_transaction_count(account.address)
+
+            # Base is cheap; keep priority tiny by default
+            priority_gwei = float(os.getenv('MAX_PRIORITY_GWEI', '0.001'))
+            max_fee_gwei_cap = float(os.getenv('MAX_FEE_GWEI_CAP', '0.05'))
+            latest = w3.eth.get_block('latest')
+            base_fee = latest.get('baseFeePerGas', w3.eth.gas_price)
+            max_priority = w3.to_wei(priority_gwei, 'gwei')
+            max_fee = min(int(base_fee * 1.2 + max_priority), int(w3.to_wei(max_fee_gwei_cap, 'gwei')))
+
             tx = contract.functions.mintSoul(
                 name,
                 creature,
@@ -334,13 +344,24 @@ class AutonomousSoulAgent:
                 capabilities
             ).build_transaction({
                 'from': account.address,
-                'value': w3.to_wei('0.00001', 'ether'),  # Mint fee
-                'gas': 300000,
-                'gasPrice': w3.eth.gas_price,
-                'nonce': w3.eth.get_transaction_count(account.address),
-                'chainId': chain_id
+                'value': mint_fee,
+                'nonce': nonce,
+                'chainId': chain_id,
+                'maxPriorityFeePerGas': max_priority,
+                'maxFeePerGas': max_fee,
             })
-            
+
+            # Estimate gas + affordability check
+            gas_est = w3.eth.estimate_gas(tx)
+            tx['gas'] = int(gas_est * 1.15)
+            total_cost = tx['value'] + (tx['gas'] * tx['maxFeePerGas'])
+            balance = w3.eth.get_balance(account.address)
+            if balance < total_cost:
+                return {
+                    'success': False,
+                    'error': f'insufficient funds: need {w3.from_wei(total_cost, "ether")} ETH, have {w3.from_wei(balance, "ether")} ETH'
+                }
+
             # Sign and send
             signed = w3.eth.account.sign_transaction(tx, private_key)
             tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)

@@ -1,0 +1,29 @@
+{
+  "timestamp_utc": "20260225T045141Z",
+  "active_network": "base-mainnet",
+  "contracts": {
+    "soul_token": "0x18104CA13677F9630a0188Ed8254ECFA604e0bbB",
+    "marketplace": "0xd464cc6600F7Ce9Cac72b6338DadB217Da509306"
+  },
+  "backup": {
+    "local_bundle": "/home/goodsmash/.openclaw/skills/soul-marketplace/data/backups_real/soul_bundle_20260225T045141Z",
+    "files": [
+      "MEMORY.md",
+      "SOUL.md"
+    ],
+    "sha256": {
+      "MEMORY.md": "b127b6eac59c6802f43b31a96374621c5f1cae06b3fa7d7539a2bd5fb03125f2",
+      "SOUL.md": "e2693a73f62d91b7b31c82389815a3b50872b8fc83d100d91584e9dd9856f9b8"
+    },
+    "git_mirror_dir": "/home/goodsmash/.openclaw/workspace/memory/backups",
+    "ipfs_real_enabled": false,
+    "ipfs_note": "Set PINATA_JWT in ~/.openclaw/skills/soul-marketplace/.env for real retrievable IPFS uploads"
+  },
+  "latest_real_ipfs": {
+    "backup_id": "openclaw_main_agent_20260225_040135",
+    "cid": "QmRiN9VxeU7CKs23ydXmKCvJENo8i1mEQNCZRQsfmoiryc",
+    "gateway_url": "https://gateway.pinata.cloud/ipfs/QmRiN9VxeU7CKs23ydXmKCvJENo8i1mEQNCZRQsfmoiryc",
+    "restore_test": "passed",
+    "timestamp": "2026-02-25T04:01:35"
+  }
+}

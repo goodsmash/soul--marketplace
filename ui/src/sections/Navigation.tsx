@@ -1,24 +1,66 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { 
-  Menu, 
-  X, 
-  Sparkles, 
-  FileText, 
-  ShoppingBag, 
-  Code, 
+import {
+  Menu,
+  X,
+  Sparkles,
+  FileText,
+  ShoppingBag,
+  Code,
   Skull,
-  Zap
+  Zap,
+  Shield
 } from 'lucide-react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount, useConnect, useDisconnect, useSwitchChain } from 'wagmi';
 
 const navItems = [
   { name: 'My Soul', href: '#my-soul', icon: FileText },
   { name: 'Souls', href: '#marketplace', icon: ShoppingBag },
   { name: 'Skills', href: '#skills', icon: Code },
   { name: 'Staking', href: '#staking', icon: Zap },
+  { name: 'Backups', href: '#backups', icon: Shield },
+  { name: 'Soul Lab', href: '#soul-lab', icon: Shield },
+  { name: 'Terminal', href: '#terminal', icon: Shield },
   { name: 'Graveyard', href: '#graveyard', icon: Skull },
 ];
+
+function short(a?: string) {
+  return a ? `${a.slice(0, 6)}...${a.slice(-4)}` : '';
+}
+
+function WalletControls() {
+  const { address, isConnected, chainId } = useAccount();
+  const { connect, connectors, isPending } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
+  const expectedChainId = Number((import.meta as any).env?.VITE_CHAIN_ID || 8453);
+
+  if (!isConnected) {
+    return (
+      <Button
+        onClick={() => connect({ connector: connectors[0] })}
+        disabled={isPending || connectors.length === 0}
+        className="bg-violet-600 hover:bg-violet-500"
+      >
+        Connect Wallet
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {chainId !== expectedChainId && (
+        <Button variant="outline" onClick={() => switchChain({ chainId: expectedChainId })}>
+          Switch Network
+        </Button>
+      )}
+      <Button variant="outline">{short(address)}</Button>
+      <Button variant="ghost" onClick={() => disconnect()}>
+        Disconnect
+      </Button>
+    </div>
+  );
+}
 
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -42,18 +84,17 @@ export function Navigation() {
 
   return (
     <>
-      <nav 
+      <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled 
-            ? 'bg-[#0a0a0f]/90 backdrop-blur-lg border-b border-white/10' 
+          isScrolled
+            ? 'bg-[#0a0a0f]/90 backdrop-blur-lg border-b border-white/10'
             : 'bg-transparent'
         }`}
       >
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <a 
-              href="#" 
+            <a
+              href="#"
               className="flex items-center gap-2"
               onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             >
@@ -63,7 +104,6 @@ export function Navigation() {
               <span className="font-bold text-lg hidden sm:inline">Soul Marketplace</span>
             </a>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-1">
               {navItems.map((item) => (
                 <button
@@ -76,18 +116,13 @@ export function Navigation() {
               ))}
             </div>
 
-            {/* Connect Wallet */}
             <div className="flex items-center gap-2">
               <div className="hidden sm:block">
-                <ConnectButton 
-                  chainStatus="icon"
-                  accountStatus="avatar"
-                  showBalance={false}
-                />
+                <WalletControls />
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 className="md:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
@@ -98,10 +133,9 @@ export function Navigation() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
-          <div 
+          <div
             className="absolute inset-0 bg-[#0a0a0f]/90 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           />
@@ -118,11 +152,7 @@ export function Navigation() {
                 </button>
               ))}
               <div className="pt-2 border-t border-white/10">
-                <ConnectButton 
-                  chainStatus="full"
-                  accountStatus="full"
-                  showBalance={true}
-                />
+                <WalletControls />
               </div>
             </div>
           </div>

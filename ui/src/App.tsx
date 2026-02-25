@@ -5,6 +5,9 @@ import { MySoul } from './sections/MySoul';
 import { SoulMarketplace } from './sections/SoulMarketplace';
 import { SkillMarketplace } from './sections/SkillMarketplace';
 import { Staking } from './sections/Staking';
+import { BackupVault } from './sections/BackupVault';
+import { SoulLab } from './sections/SoulLab';
+import { TerminalPanel } from './sections/TerminalPanel';
 import { Graveyard } from './sections/Graveyard';
 import { Footer } from './sections/Footer';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -20,6 +23,9 @@ function App() {
           <SoulMarketplace />
           <SkillMarketplace />
           <Staking />
+          <BackupVault />
+          <SoulLab />
+          <TerminalPanel />
           <Graveyard />
         </main>
         <Footer />

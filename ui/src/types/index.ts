@@ -270,15 +270,14 @@ export const SKILL_CATEGORIES: Record<typeof SkillCategory[keyof typeof SkillCat
 
 // Contract addresses (from environment variables with fallbacks)
 export const CONTRACT_ADDRESSES = {
-  // Base Mainnet - Our deployed contracts
-  soulToken: import.meta.env.VITE_SOUL_TOKEN_ADDRESS || '0xd2565D67398Db41dfe88E7e826253756A440132a',
-  marketplace: import.meta.env.VITE_MARKETPLACE_ADDRESS || '0xd464cc6600F7Ce9Cac72b6338DadB217Da509306',
-  skillRegistry: '0x0000000000000000000000000000000000000000',
-  staking: '0x0000000000000000000000000000000000000000',
+  // V2 Only (default)
+  soulToken: import.meta.env.VITE_SOUL_TOKEN_V2_ADDRESS || '0x6e338A946275b0E949faCF6f8c5A93F93684A1e0',
+  marketplace: import.meta.env.VITE_MARKETPLACE_V2_ADDRESS || '0x72bc374Bdb5Dd162635c2e5492f001210E2317a8',
   
-  // Legacy contracts (for reference)
-  soulTokenOriginal: '0x18104CA13677F9630a0188Ed8254ECFA604e0bbB',
-  marketplaceOriginal: '0xAC4136b1Fbe480dDB41C92EdAEaCf1E185F586d3',
+  // V2 specific
+  soulTokenV2: import.meta.env.VITE_SOUL_TOKEN_V2_ADDRESS || '0x6e338A946275b0E949faCF6f8c5A93F93684A1e0',
+  marketplaceV2: import.meta.env.VITE_MARKETPLACE_V2_ADDRESS || '0x72bc374Bdb5Dd162635c2e5492f001210E2317a8',
+  useV2: true,
   
   // Network config
   network: import.meta.env.VITE_NETWORK || 'base-mainnet',
@@ -308,7 +307,8 @@ export const SOUL_TOKEN_ABI = [
         {"internalType": "uint8", "name": "capabilityCount", "type": "uint8"},
         {"internalType": "string", "name": "name", "type": "string"},
         {"internalType": "string", "name": "creature", "type": "string"},
-        {"internalType": "string", "name": "ipfsHash", "type": "string"}
+        {"internalType": "string", "name": "ipfsHash", "type": "string"},
+        {"internalType": "string[]", "name": "capabilities", "type": "string[]"}
       ],
       "internalType": "struct SoulToken.Soul",
       "name": "",
@@ -330,9 +330,63 @@ export const SOUL_TOKEN_ABI = [
     "type": "function"
   },
   {
+    "inputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "name": "souls",
+    "outputs": [
+      {"internalType": "uint32", "name": "birthTime", "type": "uint32"},
+      {"internalType": "uint32", "name": "deathTime", "type": "uint32"},
+      {"internalType": "uint96", "name": "totalEarnings", "type": "uint96"},
+      {"internalType": "bool", "name": "isAlive", "type": "bool"},
+      {"internalType": "uint8", "name": "capabilityCount", "type": "uint8"},
+      {"internalType": "string", "name": "name", "type": "string"},
+      {"internalType": "string", "name": "creature", "type": "string"},
+      {"internalType": "string", "name": "ipfsHash", "type": "string"}
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "mintFee",
+    "outputs": [{"internalType": "uint72", "name": "", "type": "uint72"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "MINT_FEE",
     "outputs": [{"internalType": "uint72", "name": "", "type": "uint72"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {"internalType": "address", "name": "to", "type": "address"},
+      {"internalType": "uint256", "name": "tokenId", "type": "uint256"}
+    ],
+    "name": "approve",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "name": "approve",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "address", "name": "owner", "type": "address"}],
+    "name": "balanceOf",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "tokenId", "type": "uint256"}],
+    "name": "ownerOf",
+    "outputs": [{"internalType": "address", "name": "", "type": "address"}],
     "stateMutability": "view",
     "type": "function"
   }
