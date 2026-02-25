@@ -351,6 +351,13 @@ export const MARKETPLACE_ABI = [
   },
   {
     "inputs": [{"internalType": "uint256", "name": "soulId", "type": "uint256"}],
+    "name": "cancelListing",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "soulId", "type": "uint256"}],
     "name": "buySoul",
     "outputs": [],
     "stateMutability": "payable",

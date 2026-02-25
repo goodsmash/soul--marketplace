@@ -206,6 +206,27 @@ export function useMarketplaceStats() {
   };
 }
 
+// Hook to cancel a listing
+export function useCancelListing() {
+  const { writeContract, isPending, error, data: hash } = useWriteContract();
+
+  const cancel = async (soulId: number) => {
+    await writeContract({
+      address: CONTRACT_ADDRESSES.marketplace as `0x${string}`,
+      abi: MARKETPLACE_ABI,
+      functionName: 'cancelListing',
+      args: [BigInt(soulId)],
+    });
+  };
+
+  return {
+    cancel,
+    isPending,
+    error,
+    hash
+  };
+}
+
 // Hook to get user's ETH balance
 export function useEthBalance(address?: string) {
   const { address: connectedAddress } = useAccount();
