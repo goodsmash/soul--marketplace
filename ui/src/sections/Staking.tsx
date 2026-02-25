@@ -43,7 +43,6 @@ export function Staking() {
   const [stakeAmount, setStakeAmount] = useState('');
   const [stakeType, setStakeType] = useState<'survival' | 'death'>('survival');
   const [isStaking, setIsStaking] = useState(false);
-  const [txHash, setTxHash] = useState<string | null>(null);
 
   const handleStake = async () => {
     if (!selectedPool || !stakeAmount) return;
@@ -51,19 +50,9 @@ export function Staking() {
     setIsStaking(true);
     
     try {
-      // For now, simulate the transaction
-      // When staking contract is deployed, use:
-      // await writeContract({
-      //   address: STAKING_ADDRESS,
-      //   abi: STAKING_ABI,
-      //   functionName: 'placeStake',
-      //   args: [BigInt(selectedPool.soulId), stakeType === 'survival'],
-      //   value: parseEther(stakeAmount)
-      // });
-      
-      // Simulate for now
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setTxHash('0x' + Math.random().toString(16).slice(2, 42));
+      // Staking contract coming soon
+      // Once deployed: STAKING_ADDRESS from environment
+      alert(`Staking contract deployment required.\n\nYou want to stake ${stakeAmount} ETH on ${stakeType} for ${selectedPool.soulName}\n\nContract address needed in .env`);
       setIsStaking(false);
       setShowStakeDialog(false);
     } catch (err) {
@@ -276,12 +265,6 @@ export function Staking() {
                   `Stake ${stakeAmount || '0'} ETH on ${stakeType === 'survival' ? 'Survival' : 'Death'}`
                 )}
               </Button>
-
-              {txHash && (
-                <p className="text-sm text-emerald-400 text-center">
-                  Transaction: {txHash.slice(0, 20)}...
-                </p>
-              )}
 
               <p className="text-xs text-slate-400 text-center">
                 If you win, you receive your stake plus a share of the losing pool.

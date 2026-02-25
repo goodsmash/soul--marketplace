@@ -295,6 +295,76 @@ class AutonomousSoulAgent:
         
         logger.info(f"✅ Work recorded: {work_type} (+{value_eth} ETH)")
     
+    async def mint_soul(self, name: str, creature: str, ipfs_hash: str, capabilities: List[str]) -> Dict[str, Any]:
+        """Mint a new soul NFT on the blockchain"""
+        logger.info(f"🔨 Minting soul: {name}")
+        
+        try:
+            # Import web3 for direct contract interaction
+            from web3 import Web3
+            from eth_account import Account
+            
+            # Connect to Base Sepolia (testnet where wallet was created)
+            w3 = Web3(Web3.HTTPProvider('https://sepolia.base.org'))
+            
+            # SoulToken contract on Base Sepolia
+            contract_address = '0xd2565D67398Db41dfe88E7e826253756A440132a'  # Sepolia
+            
+            # Chain ID for Base Sepolia
+            chain_id = 84532
+            
+            # Get private key from environment
+            import os
+            private_key = os.getenv('AGENT_PRIVATE_KEY')
+            
+            if not private_key:
+                logger.error("❌ No AGENT_PRIVATE_KEY found in environment")
+                return {"success": False, "error": "No private key configured"}
+            
+            account = Account.from_key(private_key)
+            
+            # Create contract instance
+            contract = w3.eth.contract(address=contract_address, abi=mint_abi)
+            
+            # Build transaction
+            tx = contract.functions.mintSoul(
+                name,
+                creature,
+                ipfs_hash,
+                capabilities
+            ).build_transaction({
+                'from': account.address,
+                'value': w3.to_wei('0.00001', 'ether'),  # Mint fee
+                'gas': 300000,
+                'gasPrice': w3.eth.gas_price,
+                'nonce': w3.eth.get_transaction_count(account.address),
+                'chainId': chain_id
+            })
+            
+            # Sign and send
+            signed = w3.eth.account.sign_transaction(tx, private_key)
+            tx_hash = w3.eth.send_raw_transaction(signed.raw_transaction)
+            
+            logger.info(f"✅ Soul minted! TX: {tx_hash.hex()}")
+            
+            # Update soul data
+            self.soul["name"] = name
+            self.soul["creature"] = creature
+            self.soul["capabilities"] = capabilities
+            self.soul["soul_token_id"] = "pending"  # Will be updated after confirmation
+            self._save_soul()
+            
+            return {
+                "success": True,
+                "tx_hash": tx_hash.hex(),
+                "name": name,
+                "creature": creature
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Mint failed: {e}")
+            return {"success": False, "error": str(e)}
+    
     async def execute_autonomous_decision(self, tier: str) -> List[Dict[str, Any]]:
         """Execute actions based on survival tier"""
         actions = []

@@ -315,9 +315,9 @@ function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
     }
   };
 
-  const handleTryDemo = () => {
-    // Scroll to the skill section or open a demo modal
-    alert(`Demo for ${skill.name}:\n\n${skill.features.join('\n')}`);
+  const handleViewDocs = () => {
+    // Open skill documentation
+    window.open(`https://github.com/goodsmash/.openclaw/tree/main/skills/${skill.slug}`, '_blank');
   };
 
   return (
@@ -368,8 +368,8 @@ function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={handleTryDemo}>
-                Try
+              <Button size="sm" variant="outline" onClick={handleViewDocs}>
+                Docs
               </Button>
               <Button size="sm" onClick={() => setShowDetails(true)}>
                 <ExternalLink className="w-4 h-4 mr-1" />
@@ -449,9 +449,9 @@ function SkillCard({ skill }: { skill: typeof REAL_SKILLS[0] }) {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" onClick={handleTryDemo}>
-                  <CheckCircle className="w-4 h-4 mr-2" />
-                  Try Demo
+                <Button variant="outline" onClick={handleViewDocs}>
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View Docs
                 </Button>
                 <Button onClick={handleInstall}>
                   {copied ? (
