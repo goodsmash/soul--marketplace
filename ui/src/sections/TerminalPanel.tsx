@@ -13,7 +13,7 @@ export function TerminalPanel() {
             <CardTitle className="flex items-center gap-2"><Terminal className="w-5 h-5"/>Ubuntu Web Terminal</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Input value={url} onChange={(e)=>setUrl(e.target.value)} placeholder="https://terminal.yourdomain" />
+            <Input name="terminal_url" autoComplete="off" aria-label="Terminal URL" value={url} onChange={(e)=>setUrl(e.target.value)} placeholder="https://terminal.yourdomain" />
             <p className="text-sm text-slate-400">Use infra/scripts/install_web_terminal.sh on Oracle VM, then expose via secure reverse proxy.</p>
             {url && (
               <div className="space-y-2">

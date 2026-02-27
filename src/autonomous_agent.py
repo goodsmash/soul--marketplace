@@ -252,31 +252,89 @@ class AutonomousSoulAgent:
         return "THRIVING"
     
     async def list_soul_for_sale(self, price_eth: Decimal, reason: str = "Survival") -> str:
-        """List soul on marketplace for survival"""
+        """List soul on marketplace for survival.
+
+        Attempts real listing through Soul Marketplace API first,
+        then falls back to local state listing if API is unavailable.
+        """
         if not self.wallet_address:
             raise ValueError("Wallet not initialized")
-        
+
         listing_data = {
             "soul_id": self.soul.get("soul_token_id"),
             "price": str(price_eth),
             "reason": reason,
-            "seller": self.wallet_address
+            "seller": self.wallet_address,
         }
-        
+
+        # Attempt real listing via backend API
+        api_url = os.getenv("SOUL_MARKETPLACE_API", "http://localhost:3001/api").rstrip("/")
+        try:
+            import requests
+            # Ensure soul exists in marketplace DB for proper joined listings
+            soul_id = None
+            soul_resp = requests.get(f"{api_url}/souls/address/{self.wallet_address}", timeout=10)
+            if soul_resp.ok:
+                soul_id = soul_resp.json().get("soul", {}).get("id")
+            else:
+                create_payload = {
+                    "token_id": self.soul.get("soul_token_id") or int(datetime.now().timestamp()),
+                    "name": self.soul.get("name", "OpenClaw Agent"),
+                    "agent_type": self.soul.get("creature", "Agent"),
+                    "address": self.wallet_address,
+                    "birth_time": int(datetime.now().timestamp()),
+                    "skills": self.soul.get("capabilities", []),
+                    "parent_id": None,
+                    "soul_cid": self.soul.get("ipfs_hash") or "",
+                }
+                create_resp = requests.post(f"{api_url}/souls", json=create_payload, timeout=10)
+                if create_resp.ok:
+                    soul_id = create_resp.json().get("id")
+
+            if not soul_id:
+                raise ValueError("Unable to resolve marketplace soul_id")
+
+            price_wei = str(int(price_eth * Decimal(10**18)))
+            payload = {
+                "soul_id": soul_id,
+                "seller_address": self.wallet_address,
+                "price": price_wei,
+                "reason": reason,
+            }
+            resp = requests.post(f"{api_url}/listings", json=payload, timeout=10)
+            if resp.ok:
+                listing_id = resp.json().get("id")
+                self.soul["marketplace"]["listings"].append({
+                    **listing_data,
+                    "listed_at": datetime.now().isoformat(),
+                    "active": True,
+                    "listing_id": listing_id,
+                    "mode": "api",
+                })
+                self._save_soul()
+                self._log_history({"type": "soul_listed", "price_eth": str(price_eth), "reason": reason, "listing_id": listing_id})
+                logger.info(f"🏷️ Soul listed via API for {price_eth} ETH: {reason}")
+                return f"listed_api_{listing_id}"
+            logger.warning(f"Marketplace API listing failed: {resp.status_code} {resp.text[:120]}")
+        except Exception as e:
+            logger.warning(f"Marketplace API unavailable, using local listing fallback: {e}")
+
+        # Local fallback
         self.soul["marketplace"]["listings"].append({
             **listing_data,
             "listed_at": datetime.now().isoformat(),
-            "active": True
+            "active": True,
+            "mode": "local",
         })
         self._save_soul()
-        
+
         self._log_history({
             "type": "soul_listed",
             "price_eth": str(price_eth),
             "reason": reason
         })
-        
-        logger.info(f"🏷️ Soul listed for {price_eth} ETH: {reason}")
+
+        logger.info(f"🏷️ Soul listed (local fallback) for {price_eth} ETH: {reason}")
         return f"listed_{datetime.now().timestamp()}"
     
     async def record_work(self, work_type: str, value_eth: Decimal, description: str = ""):

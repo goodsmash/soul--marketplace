@@ -44,6 +44,14 @@ class SoulBackupSystem:
         self.data_dir = Path(__file__).parent / ".agent_data"
         self.backup_dir = self.data_dir / "backups"
         self.backup_dir.mkdir(parents=True, exist_ok=True)
+
+        self.workspace_dir = Path.home() / ".openclaw" / "workspace"
+        self.personality_files = {
+            "SOUL.md": self.workspace_dir / "SOUL.md",
+            "IDENTITY.md": self.workspace_dir / "IDENTITY.md",
+            "MEMORY.md": self.workspace_dir / "MEMORY.md",
+            "USER.md": self.workspace_dir / "USER.md",
+        }
         
         self.soul_file = self.data_dir / f"soul_{agent_id}.json"
         self.backup_index = self.backup_dir / "backup_index.json"
@@ -71,6 +79,19 @@ class SoulBackupSystem:
         """Generate hash of soul data for integrity checking"""
         soul_json = json.dumps(soul_data, sort_keys=True)
         return hashlib.sha256(soul_json.encode()).hexdigest()
+
+    def _read_personality_files(self) -> Dict[str, Dict[str, str]]:
+        """Capture real workspace personality/memory files into backup payload."""
+        captured: Dict[str, Dict[str, str]] = {}
+        for name, path in self.personality_files.items():
+            if path.exists():
+                content = path.read_text(encoding="utf-8", errors="ignore")
+                captured[name] = {
+                    "path": str(path),
+                    "content": content,
+                    "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
+                }
+        return captured
     
     def backup_soul(self, include_ipfs: bool = False) -> Dict[str, Any]:
         """
@@ -92,13 +113,16 @@ class SoulBackupSystem:
         timestamp = datetime.now().isoformat()
         backup_id = f"{self.agent_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
+        personality = self._read_personality_files()
+
         backup_data = {
             "backup_id": backup_id,
             "timestamp": timestamp,
             "agent_id": self.agent_id,
             "soul": soul_data,
             "soul_hash": self._hash_soul(soul_data),
-            "version": "1.0",
+            "personality_files": personality,
+            "version": "1.1",
             "chain": os.getenv("CDP_NETWORK_ID", "84532")
         }
         
@@ -249,8 +273,19 @@ class SoulBackupSystem:
         # Restore soul file
         with open(self.soul_file, 'w') as f:
             json.dump(backup_data["soul"], f, indent=2)
+
+        # Restore captured personality/memory files when present
+        restored_personality = 0
+        for name, file_info in (backup_data.get("personality_files") or {}).items():
+            try:
+                path = Path(file_info.get("path") or (self.workspace_dir / name))
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(file_info.get("content", ""), encoding="utf-8")
+                restored_personality += 1
+            except Exception as e:
+                logger.warning(f"⚠️ Failed restoring {name}: {e}")
         
-        logger.info(f"✅ Soul restored from backup: {backup_data.get('backup_id')}")
+        logger.info(f"✅ Soul restored from backup: {backup_data.get('backup_id')} (personality files restored: {restored_personality})")
         return backup_data["soul"]
     
     def _download_from_ipfs(self, ipfs_hash: str) -> Dict:

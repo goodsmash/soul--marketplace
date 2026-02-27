@@ -108,12 +108,12 @@ export function BackupVault() {
           <CardContent className="space-y-4">
             <div>
               <label className="text-sm text-slate-400">Pinata JWT (stored in browser localStorage)</label>
-              <Input value={jwt} onChange={(e) => setJwt(e.target.value)} placeholder="eyJ..." className="mt-1 bg-slate-800 border-slate-700" />
+              <Input name="pinata_jwt" autoComplete="off" aria-label="Pinata JWT" value={jwt} onChange={(e) => setJwt(e.target.value)} placeholder="eyJ..." className="mt-1 bg-slate-800 border-slate-700" />
             </div>
 
             <div>
               <label className="text-sm text-slate-400">Select actual files (SOUL.md, MEMORY.md, etc.)</label>
-              <Input type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files || []))} className="mt-1 bg-slate-800 border-slate-700" />
+              <Input name="backup_files" aria-label="Backup files upload" type="file" multiple onChange={(e) => setFiles(Array.from(e.target.files || []))} className="mt-1 bg-slate-800 border-slate-700" />
               <div className="mt-2 flex flex-wrap gap-2">
                 {files.map(f => <Badge key={f.name} variant="outline">{f.name} ({f.size}b)</Badge>)}
               </div>

@@ -137,6 +137,15 @@ Then the agent can:
             "status": self.wallet['status']
         }
 
+
+class WalletManager(AgentWallet):
+    """Backward-compatible alias used by integrated_system.py."""
+
+    def __init__(self, agent_id: Optional[str] = None):
+        self.agent_id = agent_id
+        super().__init__()
+
+
 def main():
     """CLI for wallet management"""
     import sys

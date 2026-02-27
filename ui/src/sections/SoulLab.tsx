@@ -52,12 +52,12 @@ export function SoulLab() {
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-slate-400">Upload OLD SOUL.md</label>
-                <Input type="file" onChange={(e)=>e.target.files?.[0] && loadFile(e.target.files[0],'old')} />
+                <Input name="old_soul_file" aria-label="Upload old SOUL file" type="file" onChange={(e)=>e.target.files?.[0] && loadFile(e.target.files[0],'old')} />
                 {oldHash && <Badge variant="outline" className="mt-2">old: {oldHash.slice(0,16)}...</Badge>}
               </div>
               <div>
                 <label className="text-sm text-slate-400">Upload NEW SOUL.md</label>
-                <Input type="file" onChange={(e)=>e.target.files?.[0] && loadFile(e.target.files[0],'new')} />
+                <Input name="new_soul_file" aria-label="Upload new SOUL file" type="file" onChange={(e)=>e.target.files?.[0] && loadFile(e.target.files[0],'new')} />
                 {newHash && <Badge variant="outline" className="mt-2">new: {newHash.slice(0,16)}...</Badge>}
               </div>
             </div>

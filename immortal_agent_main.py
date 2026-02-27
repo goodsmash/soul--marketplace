@@ -201,7 +201,7 @@ class ImmortalAgent:
         logger.info(f"🌉 Initiating chain migration to {target_chain}")
         
         # Create backup first
-        backup = await self.backup()
+        backup = await self.create_backup(include_ipfs=True)
         
         # Export for target chain
         export_package = self.backup.cross_chain_export(target_chain)
@@ -267,7 +267,7 @@ class ImmortalAgent:
         # Backup on every 10th heartbeat or if THRIVING
         if result['heartbeat'] % 10 == 0 or result['tier'] == "THRIVING":
             logger.info("📦 Auto-backing up soul...")
-            backup = await self.backup(include_ipfs=True)
+            backup = await self.create_backup(include_ipfs=True)
             result['backup_created'] = backup['backup_id']
         
         # Check if we need to resurrect (extreme case)

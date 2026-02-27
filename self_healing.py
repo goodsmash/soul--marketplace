@@ -6,6 +6,7 @@ Ensures agents automatically recover from failures and maintain health.
 """
 
 import json
+import os
 import time
 import shutil
 from pathlib import Path
@@ -377,33 +378,34 @@ class SelfHealingSystem:
         return "Triggered garbage collection"
     
     def _heal_backups(self) -> Optional[str]:
-        """Create emergency backup"""
+        """Create emergency backup (real IPFS-capable path)."""
         print(f"   🔧 Creating emergency backup...")
-        
+
         try:
+            import sys
             sys.path.insert(0, str(Path(__file__).parent))
-            from enhanced_survival import EnhancedSoulSurvival
-            
-            survival = EnhancedSoulSurvival(self.soul_id)
-            cid = survival.create_backup("emergency")
-            
+            from src.soul_backup import SoulBackupSystem
+
+            backup = SoulBackupSystem(self.soul_id)
+            result = backup.backup_soul(include_ipfs=True)
+            cid = result.get("ipfs_hash", "local-only")
             return f"Created emergency backup: {cid[:20]}..."
         except Exception as e:
             return f"Backup failed: {e}"
     
     def _heal_heartbeat(self) -> Optional[str]:
-        """Trigger manual heartbeat"""
+        """Trigger manual heartbeat through real CDP-backed agent path."""
         print(f"   🔧 Triggering heartbeat...")
-        
+
         try:
             import sys
+            import asyncio
             sys.path.insert(0, str(Path(__file__).parent))
-            from enhanced_survival import EnhancedSoulSurvival
-            
-            survival = EnhancedSoulSurvival(self.soul_id)
-            result = survival.heartbeat()
-            
-            return f"Heartbeat completed: {result['tier']} tier"
+            from autonomous_agent import AutonomousSoulAgent
+
+            agent = AutonomousSoulAgent(self.soul_id)
+            result = asyncio.run(agent.heartbeat())
+            return f"Heartbeat completed: {result.get('tier', 'UNKNOWN')} tier"
         except Exception as e:
             return f"Heartbeat failed: {e}"
     

@@ -194,8 +194,7 @@ class IntegratedSoulSystem:
                 balance = 0.014  # Default fallback
                 if self.cdp_agent and self.cdp_agent.wallet_address:
                     try:
-                        import asyncio
-                        balance = asyncio.run(self.cdp_agent.get_balance())
+                        balance = await self.cdp_agent.get_balance()
                         logger.info(f"💰 Real wallet balance: {balance} ETH")
                     except Exception as e:
                         logger.warning(f"Could not get real balance: {e}")

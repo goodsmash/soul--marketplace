@@ -239,9 +239,19 @@ class AgentWorkSystem:
         """Organize files"""
         target_dir = params.get("target_dir", str(Path.home() / "Downloads"))
         target = Path(target_dir)
-        
+
         if not target.exists():
-            return {"error": f"Directory not found: {target_dir}"}
+            # Fallback to common locations in this environment.
+            candidates = [
+                Path.home() / "workspace",
+                Path.home() / "repos",
+                Path.home() / ".openclaw" / "workspace",
+            ]
+            fallback = next((p for p in candidates if p.exists()), None)
+            if fallback is None:
+                return {"error": f"Directory not found: {target_dir}"}
+            target = fallback
+            target_dir = str(fallback)
         
         organized = {"moved": 0, "by_type": {}}
         
